@@ -1,0 +1,43 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/main.js",
+  "scripts": {
+    "start": "node dist/main",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rimraf dist && nest build",
+    "dev": "nest start -w | bunyan"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@bangbang93/utils": "^2.0.0",
+    "@nestjs/common": "^8.0.6",
+    "@nestjs/config": "^1.0.1",
+    "@nestjs/core": "^8.0.6",
+    "@nestjs/platform-express": "^8.0.6",
+    "bluebird": "^3.7.2",
+    "bunyan": "^1.8.15",
+    "class-transformer": "^0.4.0",
+    "class-validator": "^0.13.1",
+    "knex": "^0.95.11",
+    "ms": "^2.0.0",
+    "mysql2": "^2.3.2",
+    "nestjs-bunyan": "^2.0.0",
+    "progress": "^2.0.3",
+    "rxjs": "^7.3.0",
+    "source-map-support": "^0.5.19"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^7.6.0",
+    "@types/bluebird": "^3.5.35",
+    "@types/bunyan": "^1.8.6",
+    "@types/ms": "^0.7.31",
+    "@types/node": "^16.0.0",
+    "@types/progress": "^2.0.5",
+    "@typescript-eslint/eslint-plugin": "^4.28.0",
+    "@typescript-eslint/parser": "^4.28.0",
+    "eslint": "^7.29.0"
+  }
+}
