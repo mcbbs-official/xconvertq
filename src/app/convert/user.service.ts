@@ -37,7 +37,7 @@ export class UserService {
 
     const cursor = query.stream({highWaterMark: 100})
 
-    const bar = new ProgressBar('[user] [:bar] :rate/pps :percent :etas', {
+    const bar = new ProgressBar('[user] [:bar] :rate/rps :percent :etas', {
       total: count[0].count,
     })
 
