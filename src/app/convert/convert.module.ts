@@ -3,6 +3,7 @@ import {ModelsModule} from '../models/models.module'
 import {AttachmentService} from './converter/attachment.service'
 import {CategoryService} from './converter/category.service'
 import {ConvertService} from './convert.service'
+import {EmojiService} from './converter/emoji.service'
 import {UserService} from './converter/user.service'
 
 @Module({
@@ -14,6 +15,7 @@ import {UserService} from './converter/user.service'
     UserService,
     CategoryService,
     AttachmentService,
+    EmojiService,
   ],
   exports: [
     ConvertService,

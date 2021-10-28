@@ -2,6 +2,7 @@ import {Injectable} from '@nestjs/common'
 import {AttachmentService} from './converter/attachment.service'
 import {BaseService} from './base.service'
 import {CategoryService} from './converter/category.service'
+import {EmojiService} from './converter/emoji.service'
 import {UserService} from './converter/user.service'
 
 @Injectable()
@@ -12,15 +13,17 @@ export class ConvertService {
     private readonly userService: UserService,
     private readonly categoryService: CategoryService,
     private readonly attachmentService: AttachmentService,
+    private readonly emojiService: EmojiService,
   ) {
     this.parts = {
       user: this.userService,
       category: this.categoryService,
       attachment: this.attachmentService,
+      emoji: this.emojiService,
     }
   }
 
   public async run(part: string[]): Promise<void> {
-    await this.attachmentService.execute()
+    await this.emojiService.execute()
   }
 }
