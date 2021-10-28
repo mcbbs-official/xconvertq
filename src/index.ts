@@ -3,7 +3,9 @@ import {AppModule} from './app/app.module'
 import {CommandService} from './app/command/command.service'
 
 export async function bootstrap(): Promise<void> {
-  const app = await NestFactory.createApplicationContext(AppModule)
+  const app = await NestFactory.createApplicationContext(AppModule, {
+    logger: false,
+  })
 
   await app.init()
 

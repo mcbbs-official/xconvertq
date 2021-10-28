@@ -13,6 +13,7 @@ export class CommandService {
         choices: ['all', 'user', 'category', 'thread', 'post', 'attachment', 'emoji', 'count'],
       })
     })
+    .scriptName('xconvertq.js')
     .parse()
 
   constructor(
