@@ -1,8 +1,8 @@
 import {Injectable} from '@nestjs/common'
-import {AttachmentService} from './attachment.service'
+import {AttachmentService} from './converter/attachment.service'
 import {BaseService} from './base.service'
-import {CategoryService} from './category.service'
-import {UserService} from './user.service'
+import {CategoryService} from './converter/category.service'
+import {UserService} from './converter/user.service'
 
 @Injectable()
 export class ConvertService {

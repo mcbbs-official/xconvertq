@@ -2,10 +2,10 @@ import {Injectable} from '@nestjs/common'
 import {asyncStreamConsumer} from 'async-stream-consumer'
 import * as Logger from 'bunyan'
 import {InjectLogger} from 'nestjs-bunyan'
-import {CategoryModel, ICategorySchema} from '../models/q/category.model'
-import {ForumForumModel, IForumForumSchema} from '../models/x/forum-forum.model'
-import {ForumForumfieldModel} from '../models/x/forum-forumfield.model'
-import {BaseService} from './base.service'
+import {CategoryModel, ICategorySchema} from '../../models/q/category.model'
+import {ForumForumModel, IForumForumSchema} from '../../models/x/forum-forum.model'
+import {ForumForumfieldModel} from '../../models/x/forum-forumfield.model'
+import {BaseService} from '../base.service'
 
 @Injectable()
 export class CategoryService extends BaseService {

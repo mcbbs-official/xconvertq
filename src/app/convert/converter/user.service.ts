@@ -4,12 +4,12 @@ import {asyncStreamConsumer} from 'async-stream-consumer'
 import * as Logger from 'bunyan'
 import {fromUnixTime} from 'date-fns'
 import {InjectLogger} from 'nestjs-bunyan'
-import {IUserSchema, UserModel} from '../models/q/user.model'
-import {CommonMemberCountModel} from '../models/x/common-member-count.model'
-import {CommonMemberProfileModel} from '../models/x/common-member-profile.model'
-import {CommonMemberModel, ICommonMemberSchema} from '../models/x/common-member.model'
-import {UcenterMemberModel} from '../models/x/ucenter-member.model'
-import {BaseService} from './base.service'
+import {IUserSchema, UserModel} from '../../models/q/user.model'
+import {CommonMemberCountModel} from '../../models/x/common-member-count.model'
+import {CommonMemberProfileModel} from '../../models/x/common-member-profile.model'
+import {CommonMemberModel, ICommonMemberSchema} from '../../models/x/common-member.model'
+import {UcenterMemberModel} from '../../models/x/ucenter-member.model'
+import {BaseService} from '../base.service'
 
 @Injectable()
 export class UserService extends BaseService {

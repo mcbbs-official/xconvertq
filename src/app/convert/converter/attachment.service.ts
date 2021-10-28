@@ -5,9 +5,9 @@ import * as Logger from 'bunyan'
 import {InjectLogger} from 'nestjs-bunyan'
 import {basename, dirname} from 'path'
 import {v4} from 'uuid'
-import {AttachmentModel, IAttachmentSchema} from '../models/q/attachment.model'
-import {ForumAttachmentModel, IForumAttachmentSchema} from '../models/x/forum-attachment.model'
-import {BaseService} from './base.service'
+import {AttachmentModel, IAttachmentSchema} from '../../models/q/attachment.model'
+import {ForumAttachmentModel, IForumAttachmentSchema} from '../../models/x/forum-attachment.model'
+import {BaseService} from '../base.service'
 
 @Injectable()
 export class AttachmentService extends BaseService {
