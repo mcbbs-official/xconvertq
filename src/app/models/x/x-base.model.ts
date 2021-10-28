@@ -5,8 +5,8 @@ import {XMysql} from '../models.constant'
 
 @Injectable()
 export abstract class XBaseModel<T = unknown> {
-  @Inject(XMysql) protected readonly table: Knex
-  @Inject() private readonly configService: ConfigService
+  @Inject(XMysql) protected readonly knex: Knex
+  @Inject() protected readonly configService: ConfigService
 
   protected constructor(
     private readonly _tableName: string,
@@ -18,7 +18,7 @@ export abstract class XBaseModel<T = unknown> {
   }
 
   get query(): Knex.QueryBuilder<T> {
-    return this.table(this.tableName)
+    return this.knex(this.tableName)
   }
 
   public async getByPk(id: string | number): Promise<T> {

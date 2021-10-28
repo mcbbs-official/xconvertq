@@ -1,4 +1,5 @@
 import {Injectable} from '@nestjs/common'
+import {ConfigService} from '@nestjs/config'
 import {asyncStreamConsumer} from 'async-stream-consumer'
 import * as Logger from 'bunyan'
 import {fromUnixTime} from 'date-fns'
@@ -17,6 +18,7 @@ export class UserService extends BaseService {
   private readonly usernameSet = new Set<string>()
 
   constructor(
+    private readonly configService: ConfigService,
     private readonly commonMemberModel: CommonMemberModel,
     private readonly ucenterMemberModel: UcenterMemberModel,
     private readonly commonMemberCountModel: CommonMemberCountModel,
@@ -37,7 +39,7 @@ export class UserService extends BaseService {
     const count = await query.clone().count({count: '*'})
 
 
-    const cursor = query.stream({highWaterMark: 100})
+    const cursor = query.stream({highWaterMark: this.configService.get('HighWaterMark')})
 
     const bar = this.getBar('转换用户', count[0].count)
 

@@ -19,6 +19,6 @@ export class CommonMemberModel extends XBaseModel {
   }
 
   get query(): ReturnType<Knex['table']> {
-    return this.table<ICommonMemberSchema>(this.tableName)
+    return this.knex<ICommonMemberSchema>(this.tableName)
   }
 }
