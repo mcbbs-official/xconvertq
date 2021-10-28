@@ -8,6 +8,7 @@ import {InjectLogger} from 'nestjs-bunyan'
 import {IPostSchema, PostModel} from '../../models/q/post.model'
 import {IThreadSchema, ThreadModel} from '../../models/q/thread.model'
 import {UserModel} from '../../models/q/user.model'
+import {ForumForumModel} from '../../models/x/forum-forum.model'
 import {ForumPostModel} from '../../models/x/forum-post.model'
 import {ForumThreadModel, IForumThreadSchema} from '../../models/x/forum-thread.model'
 import {BaseService} from '../base.service'
@@ -25,6 +26,7 @@ export class ThreadService extends BaseService {
     private readonly userModel: UserModel,
     private readonly forumPostModel: ForumPostModel,
     private readonly postModel: PostModel,
+    private readonly forumForumModel: ForumForumModel,
   ) {
     super()
     this.skipAnonymous = toBoolean(configService.get('SKIP_ANONYMOUS'))
@@ -36,15 +38,14 @@ export class ThreadService extends BaseService {
       this.logger.error('Q主题表中有数据，请先删除再执行命令')
       return
     }
-    console.log('转换主题信息')
-    console.log((
-      await this.forumThreadModel.convertThread()
-    ).toQuery())
 
-    const count = await (await this.forumThreadModel.convertThread()).count({count: '1'})
+    const forumIdsQuery = await this.forumForumModel.query.distinct('fid')
+    const forumIds = forumIdsQuery.map((e) => e.fid)
+
+    const count = await this.forumThreadModel.convertThread(forumIds).count({count: '*'})
     const bar = this.getBar('转换主题信息', count[0].count)
 
-    const stream = (await this.forumThreadModel.convertThread()).stream({highWaterMark: this.configService.get('HighWaterMark')})
+    const stream = this.forumThreadModel.convertThread(forumIds).stream({highWaterMark: this.configService.get('HighWaterMark')})
 
     bar.interrupt('构建用户缓存')
     const userIds = await this.userModel.getAllId()

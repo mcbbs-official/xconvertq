@@ -1,5 +1,4 @@
 import {Injectable} from '@nestjs/common'
-import is from '@sindresorhus/is'
 import {IForumThreadSchema} from './forum-thread.model'
 import {XBaseModel} from './x-base.model'
 
@@ -41,7 +40,7 @@ export class ForumPostModel extends XBaseModel<IForumPostSchema> {
 
   public async threadFirstPost(thread: IForumThreadSchema): Promise<IForumPostSchema> {
     let table = this.query
-    if (!is.nullOrUndefined(thread.posttableid)) {
+    if (thread.posttableid) {
       table = this.knex(`${this.configService.get('X_PRE', '')}forum_post_${thread.posttableid}`)
     }
     return table.where({

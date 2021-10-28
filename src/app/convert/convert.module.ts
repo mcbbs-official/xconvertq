@@ -4,6 +4,7 @@ import {AttachmentService} from './converter/attachment.service'
 import {CategoryService} from './converter/category.service'
 import {ConvertService} from './convert.service'
 import {EmojiService} from './converter/emoji.service'
+import {ThreadService} from './converter/thread.service'
 import {UserService} from './converter/user.service'
 
 @Module({
@@ -16,6 +17,7 @@ import {UserService} from './converter/user.service'
     CategoryService,
     AttachmentService,
     EmojiService,
+    ThreadService,
   ],
   exports: [
     ConvertService,

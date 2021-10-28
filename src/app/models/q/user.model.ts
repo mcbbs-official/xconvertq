@@ -39,6 +39,6 @@ export class UserModel extends QInitModel<IUserSchema> {
 
   public async getAllId(): Promise<Set<number>> {
     const userIds = await this.query.distinct('id')
-    return new Set(...userIds)
+    return new Set(userIds.map((e) => e.id))
   }
 }

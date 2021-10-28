@@ -1,6 +1,5 @@
 import {Injectable} from '@nestjs/common'
 import {Knex} from 'knex'
-import {ForumForumModel} from './forum-forum.model'
 import {XBaseModel} from './x-base.model'
 
 export interface IForumThreadSchema {
@@ -51,16 +50,14 @@ export interface IForumThreadSchema {
 @Injectable()
 export class ForumThreadModel extends XBaseModel<IForumThreadSchema> {
   constructor(
-    private readonly forumForumModel: ForumForumModel,
   ) {
     super('forum_thread', 'tid')
   }
 
-  public async convertThread(): Promise<Knex.QueryBuilder<IForumThreadSchema>> {
-    const forumIds = await this.forumForumModel.query.distinct<number>('fid')
+  public convertThread(fids: number[]): Knex.QueryBuilder<IForumThreadSchema> {
     return this.query.where('special', 0)
       .andWhere('displayorder', 'in', [0, -1, -2, -3])
-      .andWhere('fid', 'in', forumIds)
+      .andWhere('fid', 'in', fids)
       .orderBy('tid', 'asc')
   }
 
