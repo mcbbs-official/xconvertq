@@ -34,6 +34,6 @@ export class UserModel extends QInitModel<IUserSchema> {
   }
 
   public async checkUsers(): Promise<boolean> {
-    return !!(await this.query.where('id', '>', 1).first())
+    return this.check()
   }
 }

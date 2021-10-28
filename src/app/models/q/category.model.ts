@@ -26,7 +26,7 @@ export class CategoryModel extends QInitModel<ICategorySchema> {
   }
 
   public async checkCategory(): Promise<boolean> {
-    return !!(await this.query.where('id', '>', 1).first())
+    return this.check()
   }
 
   public async init(data: ICategorySchema[]): Promise<void> {

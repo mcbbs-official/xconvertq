@@ -32,4 +32,8 @@ export abstract class QBaseModel<T = object> {
 
 export abstract class QInitModel<T> extends QBaseModel<T> {
   public abstract init(data: T[]): Promise<void>
+
+  public async check(): Promise<boolean> {
+    return !!(await this.query.where(this.pk, '>', 1).first())
+  }
 }
