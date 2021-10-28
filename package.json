@@ -37,7 +37,6 @@
     "@nestjs/cli": "^7.6.0",
     "@types/bluebird": "^3.5.35",
     "@types/bunyan": "^1.8.6",
-    "@types/date-fns": "^2.6.0",
     "@types/ms": "^0.7.31",
     "@types/node": "^16.0.0",
     "@types/progress": "^2.0.5",

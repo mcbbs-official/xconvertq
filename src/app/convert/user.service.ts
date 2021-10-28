@@ -41,6 +41,9 @@ export class UserService {
       total: count[0].count,
     })
 
+    const creator = await this.userModel.getByPk(1)
+    this.usernameSet.add(creator.username)
+
     const queue: IUserSchema[] = []
     await asyncStreamConsumer<ICommonMemberSchema>(cursor, 50, async (member) => {
       const ucMember = await this.ucenterMemberModel.getByPk(member.uid)
