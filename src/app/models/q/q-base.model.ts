@@ -4,20 +4,20 @@ import {Knex} from 'knex'
 import {QMysql} from '../models.constant'
 
 @Injectable()
-export abstract class QBaseModel<T = unknown> {
-  @Inject(QMysql) protected readonly table: Knex
-  @Inject() private readonly configService: ConfigService
+export abstract class QBaseModel<T = object> {
+  @Inject(QMysql) protected readonly table: Knex<T>
+  @Inject() protected readonly configService: ConfigService
 
   protected constructor(
     private readonly _tableName: string,
-    public readonly pk?: string,
+    public readonly pk: string = 'id',
   ) {}
 
   public get tableName(): string {
     return `${this.configService.get('Q_PRE', '')}${this._tableName}`
   }
 
-  get query(): ReturnType<Knex['table']> {
+  get query(): Knex.QueryBuilder<T> {
     return this.table(this.tableName)
   }
 
@@ -25,7 +25,11 @@ export abstract class QBaseModel<T = unknown> {
     return this.query.where(this.pk, id).first()
   }
 
-  public async insertMany(data: Partial<T>[]): Promise<void> {
-    await this.query.insert(data)
+  public async insertMany(data: Array<Partial<T>>): Promise<void> {
+    await this.query.insert(data as any)
   }
+}
+
+export abstract class QInitModel<T> extends QBaseModel<T> {
+  public abstract init(data: T[]): Promise<void>
 }

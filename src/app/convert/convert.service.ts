@@ -1,13 +1,13 @@
 import {Injectable} from '@nestjs/common'
-import {UserService} from './user.service'
+import {CategoryService} from './category.service'
 
 @Injectable()
 export class ConvertService {
   constructor(
-    private readonly userService: UserService,
+    private readonly categoryService: CategoryService,
   ) {}
 
   public async run(part: string[]): Promise<void> {
-    await this.userService.execute()
+    await this.categoryService.execute()
   }
 }

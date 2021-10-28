@@ -17,11 +17,15 @@ export abstract class XBaseModel<T = unknown> {
     return `${this.configService.get('X_PRE', '')}${this._tableName}`
   }
 
-  get query(): ReturnType<Knex['table']> {
+  get query(): Knex.QueryBuilder<T> {
     return this.table(this.tableName)
   }
 
   public async getByPk(id: string | number): Promise<T> {
     return this.query.where(this.pk, id).first()
+  }
+
+  public async insertMany(data: Array<Partial<T>>): Promise<void> {
+    await this.query.insert(data as any)
   }
 }

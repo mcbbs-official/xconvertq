@@ -12,6 +12,7 @@ import {CommandModule} from './command/command.module'
       load: [() => ({
         PROJECT_ROOT: join(__dirname, '../../'),
         APP_NAME: 'xconvertq',
+        HighWaterMark: 50,
       })],
     }),
     BunyanLoggerModule.forRootAsync({

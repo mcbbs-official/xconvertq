@@ -1,6 +1,6 @@
 import {Injectable} from '@nestjs/common'
 import {GroupUserModel} from './group-user.model'
-import {QBaseModel} from './q-base.model'
+import {QInitModel} from './q-base.model'
 import {UserWalletModel} from './user-wallet.model'
 
 export interface IUserSchema {
@@ -18,7 +18,7 @@ export interface IUserSchema {
 }
 
 @Injectable()
-export class UserModel extends QBaseModel<IUserSchema> {
+export class UserModel extends QInitModel<IUserSchema> {
   constructor(
     private readonly userWalletModel: UserWalletModel,
     private readonly groupUserModel: GroupUserModel,
@@ -26,7 +26,7 @@ export class UserModel extends QBaseModel<IUserSchema> {
     super('users')
   }
 
-  public async createUser(user: IUserSchema[]): Promise<void> {
+  public async init(user: IUserSchema[]): Promise<void> {
     await this.insertMany(user)
     const userIds = user.map((e) => e.id)
     await this.userWalletModel.init(userIds)

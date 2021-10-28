@@ -82,6 +82,7 @@ export class UserService extends BaseService {
       bar.tick()
     })
     await this.flush(queue, this.userModel)
+    bar.terminate()
   }
 
   private discuzxAvatarPath(uid: number, size = 'big', type = ''): string {
