@@ -3,15 +3,15 @@ import {asyncStreamConsumer} from 'async-stream-consumer'
 import * as Logger from 'bunyan'
 import {fromUnixTime} from 'date-fns'
 import {InjectLogger} from 'nestjs-bunyan'
-import * as ProgressBar from 'progress'
 import {IUserSchema, UserModel} from '../models/q/user.model'
 import {CommonMemberCountModel} from '../models/x/common-member-count.model'
 import {CommonMemberProfileModel} from '../models/x/common-member-profile.model'
 import {CommonMemberModel, ICommonMemberSchema} from '../models/x/common-member.model'
 import {UcenterMemberModel} from '../models/x/ucenter-member.model'
+import {BaseService} from './base.service'
 
 @Injectable()
-export class UserService {
+export class UserService extends BaseService {
   @InjectLogger() logger: Logger
 
   private readonly usernameSet = new Set<string>()
@@ -22,7 +22,9 @@ export class UserService {
     private readonly commonMemberCountModel: CommonMemberCountModel,
     private readonly commonMemberProfileModel: CommonMemberProfileModel,
     private readonly userModel: UserModel,
-  ) {}
+  ) {
+    super()
+  }
 
   public async execute() {
     const checkUser = await this.userModel.checkUsers()
@@ -37,9 +39,7 @@ export class UserService {
 
     const cursor = query.stream({highWaterMark: 100})
 
-    const bar = new ProgressBar('[user] [:bar] :rate/rps :percent :etas', {
-      total: count[0].count,
-    })
+    const bar = this.getBar('转换用户', count[0].count)
 
     const creator = await this.userModel.getByPk(1)
     this.usernameSet.add(creator.username)
@@ -77,15 +77,14 @@ export class UserService {
       }
       queue.push(user)
       if (queue.length >= 1000 ) {
-        const data = [...queue]
-        queue.length = 0
-        await this.userModel.insertMany(data)
+        await this.flush(queue, this.userModel)
       }
       bar.tick()
     })
+    await this.flush(queue, this.userModel)
   }
 
-  public discuzxAvatarPath(uid: number, size = 'big', type = ''): string {
+  private discuzxAvatarPath(uid: number, size = 'big', type = ''): string {
     size = ['big', 'middle', 'small'].includes(size) ? size : 'middle'
     const uidStr = uid.toString(10).padStart(9, '0')
     const dir = [uidStr.substr(0, 3), uidStr.substr(3, 2), uidStr.substr(5, 2)]
