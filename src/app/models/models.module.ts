@@ -7,6 +7,8 @@ import {CategoryModel} from './q/category.model'
 import {EmojiModel} from './q/emoji.model'
 import {GroupPermissionModel} from './q/group-permission.model'
 import {GroupUserModel} from './q/group-user.model'
+import {PostModel} from './q/post.model'
+import {ThreadModel} from './q/thread.model'
 import {UserWalletModel} from './q/user-wallet.model'
 import {UserModel} from './q/user.model'
 import {CommonMemberCountModel} from './x/common-member-count.model'
@@ -17,6 +19,8 @@ import {ForumAttachmentModel} from './x/forum-attachment.model'
 import {ForumForumModel} from './x/forum-forum.model'
 import {ForumForumfieldModel} from './x/forum-forumfield.model'
 import {ForumImagetypeModel} from './x/forum-imagetype.model'
+import {ForumPostModel} from './x/forum-post.model'
+import {ForumThreadModel} from './x/forum-thread.model'
 import {UcenterMemberModel} from './x/ucenter-member.model'
 
 const models = [
@@ -29,6 +33,8 @@ const models = [
   ForumAttachmentModel,
   CommonSmileyModel,
   ForumImagetypeModel,
+  ForumPostModel,
+  ForumThreadModel,
 
   UserModel,
   UserWalletModel,
@@ -37,6 +43,8 @@ const models = [
   GroupPermissionModel,
   AttachmentModel,
   EmojiModel,
+  ThreadModel,
+  PostModel,
 ]
 
 @Module({

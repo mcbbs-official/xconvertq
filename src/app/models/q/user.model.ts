@@ -36,4 +36,9 @@ export class UserModel extends QInitModel<IUserSchema> {
   public async checkUsers(): Promise<boolean> {
     return this.check()
   }
+
+  public async getAllId(): Promise<Set<number>> {
+    const userIds = await this.query.distinct('id')
+    return new Set(...userIds)
+  }
 }

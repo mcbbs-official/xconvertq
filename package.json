@@ -17,6 +17,7 @@
     "@nestjs/config": "^1.0.1",
     "@nestjs/core": "^8.0.6",
     "@nestjs/platform-express": "^8.0.6",
+    "@sindresorhus/is": "^4.2.0",
     "async-sema": "^3.1.1",
     "async-stream-consumer": "^1.0.1",
     "bluebird": "^3.7.2",
