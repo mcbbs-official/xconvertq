@@ -119,6 +119,9 @@ export class PostService extends BaseService {
         }
 
         this.queue.push(postData)
+        if (this.queue.length > 1000) {
+          await this.flush(this.queue, this.postModel)
+        }
       })
       await this.threadModel.query.update({
         post_count: commentPost,
@@ -130,6 +133,10 @@ export class PostService extends BaseService {
 
       bar.tick()
     })
+    if (this.queue.length) {
+      await this.flush(this.queue, this.postModel)
+    }
+    bar.terminate()
   }
 
   private findReply(message: string): IReply {

@@ -133,5 +133,6 @@ export class ThreadService extends BaseService {
     if (postQueue.length) {
       await this.flush(postQueue, this.postModel)
     }
+    bar.terminate()
   }
 }

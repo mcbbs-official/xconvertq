@@ -55,5 +55,6 @@ export class EmojiService extends BaseService {
 
       bar.tick()
     })
+    bar.terminate()
   }
 }
