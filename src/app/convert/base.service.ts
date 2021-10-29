@@ -5,6 +5,7 @@ export abstract class BaseService {
   public getBar(name: string, total: number): ProgressBar {
     return new ProgressBar(`[${name}] [:bar] :rate/rps :percent :etas`, {
       total,
+      width: 20,
     })
   }
 
