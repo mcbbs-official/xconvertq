@@ -80,7 +80,7 @@ export class PostService extends BaseService {
 
     await asyncStreamConsumer<IForumThreadSchema>(threadStream, 50, async (thread) => {
       if (!userIds.has(thread.authorid)) {
-        bar.interrupt(`用户不存在:${thread.tid}`)
+        bar.interrupt(`用户不存在: tid ${thread.tid}`)
         bar.tick()
         return
       }
@@ -90,6 +90,10 @@ export class PostService extends BaseService {
       let commentPost = 1;
       await asyncStreamConsumer<IForumPostSchema>(postStream, this.concurrent, async (post) => {
         if (!post.authorid && this.skipAnonymous) {
+          return
+        }
+        if (!userIds.has(post.authorid)) {
+          bar.interrupt(`用户不存在: pid ${post.pid}`)
           return
         }
         const date = fromUnixTime(post.dateline)
