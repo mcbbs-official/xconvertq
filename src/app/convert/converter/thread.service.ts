@@ -3,7 +3,8 @@ import {Injectable} from '@nestjs/common'
 import {ConfigService} from '@nestjs/config'
 import {asyncStreamConsumer} from 'async-stream-consumer'
 import * as Logger from 'bunyan'
-import {fromUnixTime} from 'date-fns'
+import {formatDistanceToNow, fromUnixTime} from 'date-fns'
+import {zhCN} from 'date-fns/locale'
 import {InjectLogger} from 'nestjs-bunyan'
 import {IPostSchema, PostModel} from '../../models/q/post.model'
 import {IThreadSchema, ThreadModel} from '../../models/q/thread.model'
@@ -39,6 +40,8 @@ export class ThreadService extends BaseService {
       this.logger.error('Q主题表中有数据，请先删除再执行命令')
       return
     }
+
+    const start = new Date()
 
     const forumIdsQuery = await this.forumForumModel.query.distinct('fid')
     const forumIds = forumIdsQuery.map((e) => e.fid)
@@ -134,5 +137,6 @@ export class ThreadService extends BaseService {
       await this.flush(postQueue, this.postModel)
     }
     bar.terminate()
+    this.logger.info(`帖子转换完成，耗时${formatDistanceToNow(start, {locale: zhCN})}`)
   }
 }

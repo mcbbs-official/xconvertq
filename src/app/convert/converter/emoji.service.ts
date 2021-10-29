@@ -1,6 +1,10 @@
 import {Injectable} from '@nestjs/common'
 import {ConfigService} from '@nestjs/config'
 import {asyncStreamConsumer} from 'async-stream-consumer'
+import * as Logger from 'bunyan'
+import {formatDistanceToNow} from 'date-fns'
+import {zhCN} from 'date-fns/locale'
+import {InjectLogger} from 'nestjs-bunyan'
 import {EmojiModel} from '../../models/q/emoji.model'
 import {CommonSmileyModel, ICommonSmileySchema} from '../../models/x/common-smiley.model'
 import {ForumImagetypeModel, IForumImagetypeSchema} from '../../models/x/forum-imagetype.model'
@@ -8,6 +12,8 @@ import {BaseService} from '../base.service'
 
 @Injectable()
 export class EmojiService extends BaseService {
+  @InjectLogger() private readonly logger: Logger
+
   constructor(
     private readonly configService: ConfigService,
     private readonly forumImagetypeModel: ForumImagetypeModel,
@@ -16,6 +22,7 @@ export class EmojiService extends BaseService {
   ) {super()}
 
   public async execute(): Promise<void> {
+    const start = new Date()
     const query = this.forumImagetypeModel.convertSmiley()
 
     const count = await query.clone().count({count: '*'})
@@ -60,5 +67,7 @@ export class EmojiService extends BaseService {
       bar.tick()
     })
     bar.terminate()
+    this.logger.info(`表情转换完成，耗时${formatDistanceToNow(start, {locale: zhCN})}`)
+
   }
 }

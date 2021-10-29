@@ -1,4 +1,8 @@
 import {Injectable} from '@nestjs/common'
+import * as Logger from 'bunyan'
+import {formatDistanceToNow} from 'date-fns'
+import {zhCN} from 'date-fns/locale'
+import {InjectLogger} from 'nestjs-bunyan'
 import {PostModel} from '../../models/q/post.model'
 import {SettingModel} from '../../models/q/setting.model'
 import {ThreadModel} from '../../models/q/thread.model'
@@ -7,6 +11,8 @@ import {BaseService} from '../base.service'
 
 @Injectable()
 export class SettingService extends BaseService {
+  @InjectLogger() private readonly logger: Logger
+
   constructor(
     private readonly settingModel: SettingModel,
     private readonly threadModel: ThreadModel,
@@ -18,6 +24,7 @@ export class SettingService extends BaseService {
 
   public async execute(): Promise<void> {
 
+    const start = new Date()
     const bar = this.getBar('更新统计信息', 3)
 
     const threadCount = await this.threadModel.query.count({count: '*'})
@@ -32,5 +39,6 @@ export class SettingService extends BaseService {
     await this.settingModel.set('post_count', postCount[0].count)
     bar.tick()
     bar.terminate()
+    this.logger.info(`统计转换完成，耗时${formatDistanceToNow(start, {locale: zhCN})}`)
   }
 }

@@ -5,7 +5,8 @@ import {asyncStreamConsumer} from 'async-stream-consumer'
 import * as convert from 'bbcode-to-markdown'
 import * as Logger from 'bunyan'
 import * as DataLoader from 'dataloader'
-import {fromUnixTime} from 'date-fns'
+import {formatDistanceToNow, fromUnixTime} from 'date-fns'
+import {zhCN} from 'date-fns/locale'
 import {InjectLogger} from 'nestjs-bunyan'
 import {IPostSchema, PostModel} from '../../models/q/post.model'
 import {ThreadModel} from '../../models/q/thread.model'
@@ -55,6 +56,8 @@ export class PostService extends BaseService {
       this.logger.error('Q帖子表中有数据，请先删除再执行命令')
       return
     }
+
+    const start = new Date()
 
     const forumIdsQuery = await this.forumForumModel.query.distinct('fid')
     const forumIds = forumIdsQuery.map((e) => e.fid)
@@ -137,6 +140,7 @@ export class PostService extends BaseService {
       await this.flush(this.queue, this.postModel)
     }
     bar.terminate()
+    this.logger.info(`回复转换完成，耗时${formatDistanceToNow(start, {locale: zhCN})}`)
   }
 
   private findReply(message: string): IReply {

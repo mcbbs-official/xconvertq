@@ -1,6 +1,8 @@
 import {Injectable} from '@nestjs/common'
 import {asyncStreamConsumer} from 'async-stream-consumer'
 import * as Logger from 'bunyan'
+import {formatDistanceToNow} from 'date-fns'
+import {zhCN} from 'date-fns/locale'
 import {InjectLogger} from 'nestjs-bunyan'
 import {CategoryModel, ICategorySchema} from '../../models/q/category.model'
 import {ForumForumModel, IForumForumSchema} from '../../models/x/forum-forum.model'
@@ -25,6 +27,8 @@ export class CategoryService extends BaseService {
       this.logger.error('Q分类表中有出默认分类外的数据，请先删除再执行命令')
       return
     }
+
+    const start = new Date()
 
     const count = await this.forumForumModel.convertForum().clone().count({count: '*'})
     const bar = this.getBar('转换板块信息', count[0].count)
@@ -58,5 +62,6 @@ export class CategoryService extends BaseService {
     })
     await this.flush(queue, this.categoryModel)
     bar.terminate()
+    this.logger.info(`分类转换完成，耗时${formatDistanceToNow(start, {locale: zhCN})}`)
   }
 }

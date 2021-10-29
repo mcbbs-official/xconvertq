@@ -2,7 +2,8 @@ import {Injectable} from '@nestjs/common'
 import {ConfigService} from '@nestjs/config'
 import {asyncStreamConsumer} from 'async-stream-consumer'
 import * as Logger from 'bunyan'
-import {fromUnixTime} from 'date-fns'
+import {formatDistanceToNow, fromUnixTime} from 'date-fns'
+import {zhCN} from 'date-fns/locale'
 import {InjectLogger} from 'nestjs-bunyan'
 import {IUserSchema, UserModel} from '../../models/q/user.model'
 import {CommonMemberCountModel} from '../../models/x/common-member-count.model'
@@ -34,6 +35,8 @@ export class UserService extends BaseService {
       this.logger.error('Q用户表有除user_id = 1 之外的数据无法继续执行用户转换，请先删除再执行命令')
       return
     }
+
+    const start = new Date()
 
     const query = this.commonMemberModel.query.where('uid', '>', 1)
     const count = await query.clone().count({count: '*'})
@@ -85,6 +88,8 @@ export class UserService extends BaseService {
     })
     await this.flush(queue, this.userModel)
     bar.terminate()
+    this.logger.info(`用户转换完成，耗时${formatDistanceToNow(start, {locale: zhCN})}`)
+
   }
 
   private discuzxAvatarPath(uid: number, size = 'big', type = ''): string {

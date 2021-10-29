@@ -2,6 +2,8 @@ import {Injectable} from '@nestjs/common'
 import {ConfigService} from '@nestjs/config'
 import {asyncStreamConsumer} from 'async-stream-consumer'
 import * as Logger from 'bunyan'
+import {formatDistanceToNow} from 'date-fns'
+import {zhCN} from 'date-fns/locale'
 import {InjectLogger} from 'nestjs-bunyan'
 import {basename, dirname} from 'path'
 import {v4} from 'uuid'
@@ -25,6 +27,7 @@ export class AttachmentService extends BaseService {
       this.logger.error('Q附件表中有数据，请先删除再执行命令')
       return
     }
+    const start = new Date()
 
     const query = this.forumAttachmentModel.convertAttachment()
     const count = await query.clone().count({count: '*'})
@@ -68,5 +71,6 @@ export class AttachmentService extends BaseService {
     })
     await this.flush(queue, this.attachmentModel)
     bar.terminate()
+    this.logger.info(`附件转换完成，耗时${formatDistanceToNow(start, {locale: zhCN})}`)
   }
 }
