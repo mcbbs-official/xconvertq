@@ -12,8 +12,11 @@ XconvertQ是使用nodejs重写的改进 [官方转换工具](https://discuz.com/
 
 本工具转换速度是官方的十倍
 
-![xconvertq.js](doc/xconvert.js.png)
+![xconvertq.js](doc/xconvertq.js.png)
  - 三百万用户转换大约只需要一小时多
+
+![thread](doc/xconvertq.js-thread.png)
+ - 主题只需要不到半小时
 
 # 使用
 

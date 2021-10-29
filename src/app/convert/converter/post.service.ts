@@ -119,7 +119,7 @@ export class PostService extends BaseService {
         }
 
         this.queue.push(postData)
-        if (this.queue.length > 1000) {
+        if (this.queue.length > 100) {
           await this.flush(this.queue, this.postModel)
         }
       })

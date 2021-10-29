@@ -122,7 +122,7 @@ export class ThreadService extends BaseService {
       if (threadQueue.length > 1000) {
         await this.flush(threadQueue, this.threadModel)
       }
-      if (postQueue.length > 1000) {
+      if (postQueue.length > 100) {
         await this.flush(postQueue, this.postModel)
       }
       bar.tick()
