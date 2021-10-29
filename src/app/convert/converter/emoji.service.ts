@@ -23,6 +23,8 @@ export class EmojiService extends BaseService {
 
     const stream = query.stream({highWaterMark: this.configService.get('HighWaterMark')})
 
+    const date = new Date()
+
     await asyncStreamConsumer<IForumImagetypeSchema>(stream, 10, async (emojiType) => {
       const smileyStream = this.commonSmileyModel.query.where('typeid', emojiType.typeid).stream()
       await asyncStreamConsumer<ICommonSmileySchema>(smileyStream, 50, async (emoji) => {
@@ -42,6 +44,8 @@ export class EmojiService extends BaseService {
             code,
             order: 0,
             url,
+            created_at: date,
+            updated_at: date,
           })
         } else {
           await this.emojiModel.query.update({

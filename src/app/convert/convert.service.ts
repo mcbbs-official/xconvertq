@@ -1,5 +1,7 @@
+import * as Logger from 'bunyan'
 import {difference, isEqual, uniq} from 'lodash'
 import {Command, CommandRunner} from 'nest-commander'
+import {InjectLogger} from 'nestjs-bunyan'
 import {BaseService} from './base.service'
 import {AttachmentService} from './converter/attachment.service'
 import {CategoryService} from './converter/category.service'
@@ -11,6 +13,7 @@ import {UserService} from './converter/user.service'
 
 @Command({name: 'convert', description: '转换'})
 export class ConvertService implements CommandRunner {
+  @InjectLogger() private readonly logger: Logger
   public readonly parts: Record<string, BaseService>
 
   constructor(
@@ -45,5 +48,6 @@ export class ConvertService implements CommandRunner {
       const service = this.parts[part]
       await service.execute()
     }
+    this.logger.info('全部转换完成')
   }
 }

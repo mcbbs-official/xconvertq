@@ -2,13 +2,14 @@ import {Module} from '@nestjs/common'
 import {ConfigModule, ConfigService} from '@nestjs/config'
 import {BunyanLoggerModule} from 'nestjs-bunyan'
 import {join} from 'path'
+import {cwd} from 'process'
 import {ConvertModule} from './convert/convert.module'
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: join(__dirname, '../../.env'),
+      envFilePath: join(cwd(), '.env'),
       load: [() => ({
         PROJECT_ROOT: join(__dirname, '../../'),
         APP_NAME: 'xconvertq',

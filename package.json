@@ -7,7 +7,8 @@
     "start": "node dist/main",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rimraf dist && nest build",
-    "dev": "nest start -w | bunyan"
+    "dev": "nest start -w | bunyan",
+    "pkg": "npm run build && pkg -C Gzip dist/main.js"
   },
   "author": "",
   "license": "ISC",
@@ -19,7 +20,7 @@
     "@nestjs/platform-express": "^8.0.6",
     "@sindresorhus/is": "^4.2.0",
     "async-sema": "^3.1.1",
-    "async-stream-consumer": "^1.0.1",
+    "async-stream-consumer": "^1.0.2",
     "bbcode-to-markdown": "^1.0.3",
     "bluebird": "^3.7.2",
     "bunyan": "^1.8.15",
@@ -51,6 +52,7 @@
     "@types/yargs": "^17.0.4",
     "@typescript-eslint/eslint-plugin": "^4.28.0",
     "@typescript-eslint/parser": "^4.28.0",
-    "eslint": "^7.29.0"
+    "eslint": "^7.29.0",
+    "pkg": "^5.4.0"
   }
 }
