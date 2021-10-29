@@ -71,8 +71,8 @@ export class UserService extends BaseService {
         salt: ucMember.salt,
         updated_at: date,
         created_at: date,
-        thread_count: memberCount.threads,
-        mobile: memberProfile.mobile,
+        thread_count: memberCount?.threads ?? 0,
+        mobile: memberProfile?.mobile ?? '',
       }
       if (this.usernameSet.has(user.username)) {
         user.username = `${user.username}${this.rand()}`
