@@ -14,7 +14,7 @@ export class GroupPermissionModel extends QInitModel<object> {
   }
 
   public async init(categories: ICategorySchema[]) {
-    const data = categories.map((e) => this.getCategoryPermissions(e))
+    const data = categories.map((e) => this.getCategoryPermissions(e)).flat()
     await this.query.insert(data).onConflict().ignore()
   }
 
