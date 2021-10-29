@@ -3,9 +3,9 @@ import {QInitModel} from '../models/q/q-base.model'
 
 export abstract class BaseService {
   public getBar(name: string, total: number): ProgressBar {
-    return new ProgressBar(`[${name}] [:bar] :rate/rps :percent :etas`, {
+    return new ProgressBar(`[${name}] :current/:total [:bar] :rate/rps :percent :etas`, {
       total,
-      width: 20,
+      width: 80,
     })
   }
 
