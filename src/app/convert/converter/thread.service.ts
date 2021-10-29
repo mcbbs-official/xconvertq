@@ -12,6 +12,7 @@ import {ForumForumModel} from '../../models/x/forum-forum.model'
 import {ForumPostModel} from '../../models/x/forum-post.model'
 import {ForumThreadModel, IForumThreadSchema} from '../../models/x/forum-thread.model'
 import {BaseService} from '../base.service'
+import * as convert from 'bbcode-to-markdown'
 
 @Injectable()
 export class ThreadService extends BaseService {
@@ -53,17 +54,20 @@ export class ThreadService extends BaseService {
     const threadQueue: IThreadSchema[] = []
     const postQueue: IPostSchema[] = []
     await asyncStreamConsumer<IForumThreadSchema>(stream, 50, async (thread) => {
-      if (thread.authorid && this.skipAnonymous) {
+      if (!thread.authorid && this.skipAnonymous) {
         //匿名贴不转
+        bar.interrupt(`跳过匿名贴:${thread.tid}`)
         bar.tick()
         return
       }
       if (!userIds.has(thread.authorid)) {
+        bar.interrupt(`用户不存在:${thread.tid}`)
         bar.tick()
         return
       }
       const firstPost = await this.forumPostModel.threadFirstPost(thread)
       if (!firstPost || (!firstPost.authorid && this.skipAnonymous)) {
+        bar.interrupt(`跳过匿名贴2:${thread.tid}`)
         bar.tick()
         return
       }
@@ -101,8 +105,8 @@ export class ThreadService extends BaseService {
         is_first: firstPost.first,
         created_at: date,
         updated_at: fromUnixTime(thread.lastpost),
-        content: firstPost.message,
-        ip: '',
+        content: convert(firstPost.message),
+        ip: firstPost.useip,
       }
       if (postStatus === 'delete') {
         postData.deleted_at = date
