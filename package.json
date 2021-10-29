@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rimraf dist && nest build",
     "dev": "nest start -w | bunyan",
-    "pkg": "npm run build && pkg -C Gzip dist/main.js"
+    "pkg": "npm run build && pkg -C Gzip dist/main.js -out-path=pkg"
   },
   "author": "",
   "license": "ISC",
