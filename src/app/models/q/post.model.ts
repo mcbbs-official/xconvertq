@@ -31,4 +31,8 @@ export class PostModel extends QInitModel<IPostSchema> {
   public async init(data: IPostSchema[]): Promise<void> {
     await this.insertMany(data)
   }
+
+  public async check(): Promise<boolean> {
+    return !!(await this.query.where('is_first', '!=', 1).first())
+  }
 }

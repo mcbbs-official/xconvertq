@@ -1,4 +1,6 @@
 import {Injectable} from '@nestjs/common'
+import * as DataLoader from 'dataloader'
+import * as QuickLRU from 'quick-lru'
 import {GroupUserModel} from './group-user.model'
 import {QInitModel} from './q-base.model'
 import {UserWalletModel} from './user-wallet.model'
@@ -40,5 +42,14 @@ export class UserModel extends QInitModel<IUserSchema> {
   public async getAllId(): Promise<Set<number>> {
     const userIds = await this.query.distinct('id')
     return new Set(userIds.map((e) => e.id))
+  }
+
+  public getUsernameLoader(): DataLoader<string, IUserSchema> {
+    return new DataLoader<string, IUserSchema>(async (usernames) => {
+      const users: IUserSchema[] = await this.query.whereIn('username', usernames)
+      return usernames.map((e) => users.find((user) => user.username === e))
+    }, {
+      cacheMap: new QuickLRU({maxSize: 1e6}),
+    })
   }
 }

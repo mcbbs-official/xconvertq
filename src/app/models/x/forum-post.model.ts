@@ -1,4 +1,5 @@
 import {Injectable} from '@nestjs/common'
+import {Knex} from 'knex'
 import {IForumThreadSchema} from './forum-thread.model'
 import {XBaseModel} from './x-base.model'
 
@@ -48,6 +49,16 @@ export class ForumPostModel extends XBaseModel<IForumPostSchema> {
       tid: thread.tid,
     })
       .first()
+  }
+
+  public getPostsQuery(thread: IForumThreadSchema): Knex.QueryBuilder<IForumPostSchema> {
+    let table = this.query
+    if (thread.posttableid) {
+      table = this.knex(`${this.configService.get('X_PRE', '')}forum_post_${thread.posttableid}`)
+    }
+    return table.where({
+      first: 0, tid: thread.tid,
+    })
   }
 
   public approvedValue(invisible: number): number | 'delete' {
