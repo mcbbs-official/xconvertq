@@ -39,7 +39,7 @@ export class CategoryService extends BaseService {
 
     const date = new Date()
 
-    await asyncStreamConsumer<IForumForumSchema>(query, 50, async (forum) => {
+    await asyncStreamConsumer<IForumForumSchema>(query, this.concurrent, async (forum) => {
       const forumField = await this.forumForumfieldModel.getByPk(forum.fid)
 
       const category: ICategorySchema = {
@@ -55,7 +55,7 @@ export class CategoryService extends BaseService {
         updated_at: date,
       }
       queue.push(category)
-      if (queue.length > 1000) {
+      if (queue.length > this.batchSize) {
         await this.flush(queue, this.categoryModel)
       }
       bar.tick()

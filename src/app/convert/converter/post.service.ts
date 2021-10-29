@@ -34,13 +34,13 @@ export class PostService extends BaseService {
   private readonly postIdLoader: DataLoader<number, IPostSchema>
 
   constructor(
-    private readonly configService: ConfigService,
     private readonly postModel: PostModel,
     private readonly forumPostModel: ForumPostModel,
     private readonly forumThreadModel: ForumThreadModel,
     private readonly forumForumModel: ForumForumModel,
     private readonly userModel: UserModel,
     private readonly threadModel: ThreadModel,
+    configService: ConfigService,
   ) {
     super()
     this.skipAnonymous = toBoolean(configService.get('SKIP_ANONYMOUS'))
@@ -48,6 +48,13 @@ export class PostService extends BaseService {
       const posts = await this.postModel.query.whereIn('id', pids)
       return pids.map((pid) => posts.find((post) => post.id === pid))
     })
+  }
+
+  public onModuleInit() {
+    super.onModuleInit()
+    if (this.batchSize > 10) {
+      this.batchSize = Math.round(this.batchSize / 10)
+    }
   }
 
   public async execute(): Promise<void> {
@@ -81,7 +88,7 @@ export class PostService extends BaseService {
       const postQuery = this.forumPostModel.getPostsQuery(thread).orderBy('pid', 'asc')
       const postStream = postQuery.stream({highWaterMark: this.configService.get('HighWaterMark')})
       let commentPost = 1;
-      await asyncStreamConsumer<IForumPostSchema>(postStream, 50, async (post) => {
+      await asyncStreamConsumer<IForumPostSchema>(postStream, this.concurrent, async (post) => {
         if (!post.authorid && this.skipAnonymous) {
           return
         }
@@ -122,7 +129,7 @@ export class PostService extends BaseService {
         }
 
         this.queue.push(postData)
-        if (this.queue.length > 100) {
+        if (this.queue.length > this.batchSize) {
           await this.flush(this.queue, this.postModel)
         }
       })

@@ -1,5 +1,4 @@
 import {Injectable} from '@nestjs/common'
-import {ConfigService} from '@nestjs/config'
 import {asyncStreamConsumer} from 'async-stream-consumer'
 import * as Logger from 'bunyan'
 import {formatDistanceToNow} from 'date-fns'
@@ -15,7 +14,6 @@ export class EmojiService extends BaseService {
   @InjectLogger() private readonly logger: Logger
 
   constructor(
-    private readonly configService: ConfigService,
     private readonly forumImagetypeModel: ForumImagetypeModel,
     private readonly commonSmileyModel: CommonSmileyModel,
     private readonly emojiModel: EmojiModel,
@@ -32,9 +30,9 @@ export class EmojiService extends BaseService {
 
     const date = new Date()
 
-    await asyncStreamConsumer<IForumImagetypeSchema>(stream, 10, async (emojiType) => {
+    await asyncStreamConsumer<IForumImagetypeSchema>(stream, this.concurrent, async (emojiType) => {
       const smileyStream = this.commonSmileyModel.query.where('typeid', emojiType.typeid).stream()
-      await asyncStreamConsumer<ICommonSmileySchema>(smileyStream, 50, async (emoji) => {
+      await asyncStreamConsumer<ICommonSmileySchema>(smileyStream, this.concurrent, async (emoji) => {
         const code = emoji.code
           .replace(/{/, '[')
           .replace(/}/, ']')

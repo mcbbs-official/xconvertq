@@ -1,5 +1,4 @@
 import {Injectable} from '@nestjs/common'
-import {ConfigService} from '@nestjs/config'
 import {asyncStreamConsumer} from 'async-stream-consumer'
 import * as Logger from 'bunyan'
 import {formatDistanceToNow, fromUnixTime} from 'date-fns'
@@ -19,7 +18,6 @@ export class UserService extends BaseService {
   private readonly usernameSet = new Set<string>()
 
   constructor(
-    private readonly configService: ConfigService,
     private readonly commonMemberModel: CommonMemberModel,
     private readonly ucenterMemberModel: UcenterMemberModel,
     private readonly commonMemberCountModel: CommonMemberCountModel,
@@ -81,7 +79,7 @@ export class UserService extends BaseService {
         user.username = `${user.username}${this.rand()}`
       }
       queue.push(user)
-      if (queue.length >= 1000 ) {
+      if (queue.length >= this.batchSize ) {
         await this.flush(queue, this.userModel)
       }
       bar.tick()

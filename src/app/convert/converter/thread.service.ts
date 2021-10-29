@@ -22,16 +22,23 @@ export class ThreadService extends BaseService {
   private readonly skipAnonymous: boolean
 
   constructor(
-    private readonly configService: ConfigService,
     private readonly threadModel: ThreadModel,
     private readonly forumThreadModel: ForumThreadModel,
     private readonly userModel: UserModel,
     private readonly forumPostModel: ForumPostModel,
     private readonly postModel: PostModel,
     private readonly forumForumModel: ForumForumModel,
+    configService: ConfigService,
   ) {
     super()
     this.skipAnonymous = toBoolean(configService.get('SKIP_ANONYMOUS'))
+  }
+
+  public onModuleInit() {
+    super.onModuleInit()
+    if (this.batchSize > 10) {
+      this.batchSize = Math.round(this.batchSize / 10)
+    }
   }
 
   public async execute(): Promise<void> {
@@ -56,7 +63,7 @@ export class ThreadService extends BaseService {
 
     const threadQueue: IThreadSchema[] = []
     const postQueue: IPostSchema[] = []
-    await asyncStreamConsumer<IForumThreadSchema>(stream, 50, async (thread) => {
+    await asyncStreamConsumer<IForumThreadSchema>(stream, this.concurrent, async (thread) => {
       if (!thread.authorid && this.skipAnonymous) {
         //匿名贴不转
         bar.interrupt(`跳过匿名贴:${thread.tid}`)
@@ -122,10 +129,10 @@ export class ThreadService extends BaseService {
 
       threadQueue.push(threadData)
       postQueue.push(postData)
-      if (threadQueue.length > 1000) {
+      if (threadQueue.length > this.batchSize) {
         await this.flush(threadQueue, this.threadModel)
       }
-      if (postQueue.length > 100) {
+      if (postQueue.length > this.batchSize) {
         await this.flush(postQueue, this.postModel)
       }
       bar.tick()

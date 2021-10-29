@@ -19,5 +19,8 @@ XconvertQ是使用nodejs重写的改进 [官方转换工具](https://discuz.com/
  - 主题只需要不到半小时
 
 # 使用
+```sql 
+set global max_allowed_packet = 1073741824;
+```
 
  TBD

@@ -1,5 +1,4 @@
 import {Injectable} from '@nestjs/common'
-import {ConfigService} from '@nestjs/config'
 import {asyncStreamConsumer} from 'async-stream-consumer'
 import * as Logger from 'bunyan'
 import {formatDistanceToNow} from 'date-fns'
@@ -16,7 +15,6 @@ export class AttachmentService extends BaseService {
   @InjectLogger() private readonly logger: Logger
 
   constructor(
-    private readonly configService: ConfigService,
     private readonly attachmentModel: AttachmentModel,
     private readonly forumAttachmentModel: ForumAttachmentModel,
   ) {super()}
@@ -39,7 +37,7 @@ export class AttachmentService extends BaseService {
     const date = new Date()
 
     const stream = query.stream({highWaterMark: this.configService.get('HighWaterMark')})
-    await asyncStreamConsumer<IForumAttachmentSchema>(stream, 50, async (attach) => {
+    await asyncStreamConsumer<IForumAttachmentSchema>(stream, this.concurrent, async (attach) => {
       const attachmentInfo = await this.forumAttachmentModel.getAttachmentInfo(attach)
       if (!attachmentInfo) {
         bar.tick()
@@ -64,7 +62,7 @@ export class AttachmentService extends BaseService {
         created_at: date,
         updated_at: date,
       })
-      if (queue.length > 1000) {
+      if (queue.length > this.batchSize) {
         await this.flush(queue, this.attachmentModel)
       }
       bar.tick()
