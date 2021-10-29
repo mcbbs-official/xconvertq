@@ -8,6 +8,7 @@ import {EmojiModel} from './q/emoji.model'
 import {GroupPermissionModel} from './q/group-permission.model'
 import {GroupUserModel} from './q/group-user.model'
 import {PostModel} from './q/post.model'
+import {SettingModel} from './q/setting.model'
 import {ThreadModel} from './q/thread.model'
 import {UserWalletModel} from './q/user-wallet.model'
 import {UserModel} from './q/user.model'
@@ -45,6 +46,7 @@ const models = [
   EmojiModel,
   ThreadModel,
   PostModel,
+  SettingModel,
 ]
 
 @Module({

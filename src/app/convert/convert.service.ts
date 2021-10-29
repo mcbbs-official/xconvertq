@@ -1,6 +1,7 @@
-import {Injectable} from '@nestjs/common'
-import {AttachmentService} from './converter/attachment.service'
+import {difference, isEqual, uniq} from 'lodash'
+import {Command, CommandRunner} from 'nest-commander'
 import {BaseService} from './base.service'
+import {AttachmentService} from './converter/attachment.service'
 import {CategoryService} from './converter/category.service'
 import {EmojiService} from './converter/emoji.service'
 import {PostService} from './converter/post.service'
@@ -8,8 +9,8 @@ import {SettingService} from './converter/setting.service'
 import {ThreadService} from './converter/thread.service'
 import {UserService} from './converter/user.service'
 
-@Injectable()
-export class ConvertService {
+@Command({name: 'convert', description: '转换'})
+export class ConvertService implements CommandRunner {
   public readonly parts: Record<string, BaseService>
 
   constructor(
@@ -33,6 +34,16 @@ export class ConvertService {
   }
 
   public async run(part: string[]): Promise<void> {
-    await this.postService.execute()
+    part = uniq(part)
+    let parts = Object.keys(this.parts)
+    if (part.length && !isEqual(part, ['all'])) {
+      const left = difference(part, parts)
+      if (left.length !== 0) throw new Error(`未知转换类型 ${left}`)
+      parts = parts.filter((e) => part.includes(e))
+    }
+    for (const part of parts) {
+      const service = this.parts[part]
+      await service.execute()
+    }
   }
 }

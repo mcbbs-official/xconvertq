@@ -2,7 +2,7 @@ import {Module} from '@nestjs/common'
 import {ConfigModule, ConfigService} from '@nestjs/config'
 import {BunyanLoggerModule} from 'nestjs-bunyan'
 import {join} from 'path'
-import {CommandModule} from './command/command.module'
+import {ConvertModule} from './convert/convert.module'
 
 @Module({
   imports: [
@@ -28,7 +28,7 @@ import {CommandModule} from './command/command.module'
       },
     }),
 
-    CommandModule,
+    ConvertModule,
   ]
 })
 export class AppModule {}
