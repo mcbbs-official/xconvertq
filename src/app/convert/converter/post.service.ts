@@ -2,7 +2,6 @@ import {toBoolean} from '@bangbang93/utils'
 import {Injectable} from '@nestjs/common'
 import {ConfigService} from '@nestjs/config'
 import {asyncStreamConsumer} from 'async-stream-consumer'
-import * as convert from 'bbcode-to-markdown'
 import * as Bluebird from 'bluebird'
 import * as Logger from 'bunyan'
 import * as DataLoader from 'dataloader'
@@ -16,6 +15,7 @@ import {ForumForumModel} from '../../models/x/forum-forum.model'
 import {ForumPostModel, IForumPostSchema} from '../../models/x/forum-post.model'
 import {ForumThreadModel} from '../../models/x/forum-thread.model'
 import {BaseService} from '../base.service'
+import Piscina = require('piscina')
 
 interface IReply {
   message: string
@@ -33,6 +33,10 @@ export class PostService extends BaseService {
 
   private readonly queue: IPostSchema[] = []
   private readonly postIdLoader: DataLoader<number, IPostSchema>
+
+  private readonly piscina = new Piscina({
+    filename: require.resolve('../../../worker'),
+  })
 
   constructor(
     private readonly postModel: PostModel,
@@ -105,6 +109,8 @@ export class PostService extends BaseService {
       }
 
       const date = fromUnixTime(post.dateline)
+
+      const result: IReply = await this.piscina.run(post.message)
       const postData: IPostSchema = {
         id: post.pid,
         user_id: post.authorid,
@@ -114,7 +120,7 @@ export class PostService extends BaseService {
         updated_at: date,
         ip: post.useip,
         is_approved: 0,
-        content: convert(post.message),
+        content: result.message,
       }
       const postStatus = this.forumPostModel.approvedValue(post.invisible)
       if (postStatus === 'delete') {
@@ -123,7 +129,6 @@ export class PostService extends BaseService {
         postData.is_approved = postStatus
       }
 
-      const result = this.findReply(post.message)
       if (result.replyInfo) {
         const replyUser = await usernameLoader.load(result.replyInfo.username)
         if (replyUser) {
@@ -168,25 +173,6 @@ export class PostService extends BaseService {
     })
 
     this.logger.info(`回复转换完成，耗时${formatDistanceToNow(start, {locale: zhCN})}`)
-  }
-
-  private findReply(message: string): IReply {
-    let replyInfo = null
-    message = message.replace(/^\[quote]([\s\S]*?)\[\/quote]/, (_, matches) => {
-      if (!matches[0]) return ''
-      const pid = /&pid=(\d+)&/.exec(matches[0])
-      const username = /999999](.*)发表于/.exec(matches[0])
-      if (pid?.[1] && username?.[1]) {
-        replyInfo = {
-          pid: parseInt(pid[1], 10),
-          username: username[1],
-        }
-      }
-    })
-    return {
-      message,
-      replyInfo,
-    }
   }
 
   private async getPost(pid: number): Promise<IPostSchema> {
