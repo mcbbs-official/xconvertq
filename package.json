@@ -1,8 +1,8 @@
 {
-  "name": "app",
+  "name": "xconvertq.js",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/main.js",
+  "bin": "dist/main.js",
   "scripts": {
     "start": "node dist/main",
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -55,5 +55,10 @@
     "@typescript-eslint/parser": "^4.28.0",
     "eslint": "^7.29.0",
     "pkg": "^5.4.0"
+  },
+  "pkg": {
+    "assets": ["node_modules/piscina/**/*", "dist/worker.js"],
+    "compress": "Brotli",
+    "targets": ["linuxstatic"]
   }
 }

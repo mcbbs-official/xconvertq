@@ -8,7 +8,7 @@ export interface IMessageData {
   }
 }
 
-export function processMessage(message: string): IMessageData {
+export default function processMessage(message: string): IMessageData {
   let replyInfo = null
   message = message.replace(/^\[quote]([\s\S]*?)\[\/quote]/, (_, matches) => {
     if (matches[0]) {
