@@ -59,6 +59,7 @@
   "pkg": {
     "assets": ["node_modules/piscina/**/*", "dist/worker.js"],
     "compress": "Brotli",
-    "targets": ["linuxstatic"]
+    "targets": ["linuxstatic"],
+    "options": "max-old-space-size=4096"
   }
 }

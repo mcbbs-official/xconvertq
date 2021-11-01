@@ -17,6 +17,7 @@ XconvertQ是使用nodejs重写的改进 [官方转换工具](https://discuz.com/
 
 ![thread](doc/xconvertq.js-thread.png)
  - 主题只需要不到半小时
+ - 回复转换使用多线程
 
 # 使用
 ```sql 
