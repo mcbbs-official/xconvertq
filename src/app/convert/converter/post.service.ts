@@ -155,7 +155,7 @@ export class PostService extends BaseService {
 
     const countBar = this.getBar('更新帖子统计信息', threadCounter.size)
     await Bluebird.map(threadCounter.entries(), async ([tid, counter]) => {
-      this.threadModel.query.update({
+      await this.threadModel.query.update({
         post_count: counter,
       })
         .where({
