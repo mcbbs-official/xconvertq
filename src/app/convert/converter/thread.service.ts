@@ -53,7 +53,7 @@ export class ThreadService extends BaseService {
     const forumIdsQuery = await this.forumForumModel.query.distinct('fid')
     const forumIds = forumIdsQuery.map((e) => e.fid)
 
-    const count = await this.forumThreadModel.convertThread(forumIds).count({count: '*'})
+    const count = await this.forumThreadModel.convertThread(forumIds).count({count: 'tid'})
     const bar = this.getBar('转换主题信息', count[0].count)
 
     const stream = this.forumThreadModel.convertThread(forumIds).stream({highWaterMark: this.configService.get('HighWaterMark')})

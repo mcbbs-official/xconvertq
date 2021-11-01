@@ -51,6 +51,11 @@ export class ForumPostModel extends XBaseModel<IForumPostSchema> {
       .first()
   }
 
+  public convertPost(fids: number[]): Knex.QueryBuilder<IForumPostSchema, IForumPostSchema[]> {
+    return this.query.where('fid', 'in', fids)
+      .andWhere('first', 0)
+  }
+
   public getPostsQuery(thread: IForumThreadSchema): Knex.QueryBuilder<IForumPostSchema> {
     let table = this.query
     if (thread.posttableid) {

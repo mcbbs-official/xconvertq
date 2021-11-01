@@ -1,5 +1,8 @@
 import {Injectable} from '@nestjs/common'
+import * as DataLoader from 'dataloader'
 import {Knex} from 'knex'
+import {pick} from 'lodash'
+import * as QuickLRU from 'quick-lru'
 import {XBaseModel} from './x-base.model'
 
 export interface IForumThreadSchema {
@@ -47,6 +50,8 @@ export interface IForumThreadSchema {
   hidden: number
 }
 
+export type ThreadCache = Pick<IForumThreadSchema, 'tid' | 'fid' | 'displayorder' | 'special' | 'authorid'>
+
 @Injectable()
 export class ForumThreadModel extends XBaseModel<IForumThreadSchema> {
   constructor(
@@ -59,6 +64,19 @@ export class ForumThreadModel extends XBaseModel<IForumThreadSchema> {
       .andWhere('displayorder', 'in', [0, -1, -2, -3])
       .andWhere('fid', 'in', fids)
       .orderBy('tid', 'asc')
+  }
+
+  public getPostConvertCache(): DataLoader<number, ThreadCache> {
+    return new DataLoader<number, ThreadCache>(async (ids) => {
+      const threads: IForumThreadSchema[] = await this.query.whereIn('tid', ids)
+      return ids.map((id) => {
+        const thread = threads.find((thread) => thread.tid === id)
+        if (!thread) return null
+        return pick(thread, 'tid', 'fid', 'displayorder', 'special', 'authorid')
+      })
+    }, {
+      cacheMap: new QuickLRU({maxSize: 1e6})
+    })
   }
 
   public approvedStatus(displayorder: number): number | 'delete' {
