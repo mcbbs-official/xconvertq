@@ -34,7 +34,6 @@
     "mysql2": "^2.3.2",
     "nest-commander": "^2.3.3",
     "nestjs-bunyan": "^2.0.0",
-    "piscina": "^3.1.0",
     "progress": "^2.0.3",
     "quick-lru": "^5.1.1",
     "rxjs": "^7.3.0",
@@ -57,9 +56,14 @@
     "pkg": "^5.4.0"
   },
   "pkg": {
-    "assets": ["node_modules/piscina/**/*", "dist/worker.js"],
+    "assets": [
+      "node_modules/piscina/**/*",
+      "dist/worker.js"
+    ],
     "compress": "Brotli",
-    "targets": ["linuxstatic"],
+    "targets": [
+      "linux"
+    ],
     "options": "max-old-space-size=4096"
   }
 }
