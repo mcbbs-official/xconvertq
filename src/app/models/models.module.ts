@@ -58,6 +58,9 @@ const models = [
         return knex({
           client: 'mysql2',
           connection: configService.get('X_MYSQL'),
+          pool: {
+            max: 50,
+          }
         })
       }
     },
