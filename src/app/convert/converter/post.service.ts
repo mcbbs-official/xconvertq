@@ -71,6 +71,7 @@ export class PostService extends BaseService {
     const forumIdsQuery = await this.forumForumModel.query.distinct('fid')
     const forumIds = forumIdsQuery.map((e) => e.fid)
     const postQuery = this.forumPostModel.convertPost(forumIds)
+    this.logger.info('统计总数')
     const postCount = await postQuery.clone().count({count: 'pid'})
     const bar = this.getBar('转换回复信息', postCount[0].count)
 
