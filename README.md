@@ -40,6 +40,11 @@ set global max_allowed_packet = 1073741824;
 ```
 若没有mysql管理员权限，无法修改包大小限制，则需要降低批量大小 详见 `BATCH_SIZE`参数
 
+## 步骤
+1. 首先按照官方步骤的3、4、5，修改数据库和dzq文件并且安置附件
+2. 执行./xconvertq convert
+3. 按照官方步骤7修改rewrite，跳转旧链接
+
 ## 参数
 ## 栗子
 见 [参数栗子](./.env.defaults)
