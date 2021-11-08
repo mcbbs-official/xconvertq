@@ -43,7 +43,7 @@ export class PostService extends BaseService {
     configService: ConfigService,
   ) {
     super()
-    this.skipAnonymous = toBoolean(configService.get('SKIP_ANONYMOUS'))
+    this.skipAnonymous = !!toBoolean(configService.get('SKIP_ANONYMOUS'))
     this.postIdLoader = new DataLoader<number, IPostSchema>(async (pids) => {
       const posts = await this.postModel.query.whereIn('id', pids)
       return pids.map((pid) => posts.find((post) => post.id === pid))
@@ -85,10 +85,14 @@ export class PostService extends BaseService {
 
     await asyncStreamConsumer<IForumPostSchema>(postStream, this.concurrent, async (post) => {
       if (!post.authorid && this.skipAnonymous) {
+        bar.tick()
         return
+      } else {
+        post.authorid = 1
       }
       if (!userIds.has(post.authorid)) {
         bar.interrupt(`用户不存在: pid ${post.pid}`)
+        bar.tick()
         return
       }
 

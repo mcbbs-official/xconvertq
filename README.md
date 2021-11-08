@@ -59,7 +59,7 @@ set global max_allowed_packet = 1073741824;
 |X_PRE|-|DiscuzX的表前缀
 |Q_MYSQL|-|DiscuzQ的mysql连接串
 |Q_PRE|-|DiscuzQ的表前缀
-|SKIP_ANONYMOUS|false|是否跳过DiscuzX的匿名贴转换
+|SKIP_ANONYMOUS|true|是否跳过DiscuzX的匿名贴转换，若保留匿名贴，则发帖用户会成为uid=1的用户，因为dzq不支持匿名贴
 |BATCH_SIZE|1000|批量插入大小
 |MAX_THREAD|0|转换帖子时使用的线程数量，为0使用所有核心
 |CONVERT_MODE|html|转化模式，可选html或markdown

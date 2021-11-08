@@ -55,7 +55,9 @@ export class ThreadService extends BaseService {
     const count = await this.forumThreadModel.convertThread(forumIds).count({count: 'tid'})
     const bar = this.getBar('转换主题信息', count[0].count)
 
-    const stream = this.forumThreadModel.convertThread(forumIds).stream({highWaterMark: this.configService.get('HighWaterMark')})
+    const stream = this.forumThreadModel.convertThread(forumIds).stream({
+      highWaterMark: this.configService.get('HighWaterMark'),
+    })
 
     bar.interrupt('构建用户缓存')
     const userIds = await this.userModel.getAllId()
@@ -68,17 +70,28 @@ export class ThreadService extends BaseService {
         bar.interrupt(`跳过匿名贴:${thread.tid}`)
         bar.tick()
         return
+      } else {
+        thread.authorid = 1
       }
+
       if (!userIds.has(thread.authorid)) {
         bar.interrupt(`用户不存在:${thread.tid}`)
         bar.tick()
         return
       }
       const firstPost = await this.forumPostModel.threadFirstPost(thread)
-      if (!firstPost || (!firstPost.authorid && this.skipAnonymous)) {
+      if (!firstPost || !firstPost.authorid && this.skipAnonymous) {
         bar.interrupt(`跳过匿名贴2:${thread.tid}`)
         bar.tick()
         return
+      } else {
+        if (firstPost) {
+          firstPost.authorid = 1
+        } else {
+          bar.interrupt(`跳过无楼主贴:${thread.tid}`)
+          bar.tick()
+          return
+        }
       }
       const date = fromUnixTime(thread.dateline)
       const threadData: IThreadSchema = {
