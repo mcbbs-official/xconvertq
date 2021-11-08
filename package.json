@@ -1,6 +1,6 @@
 {
   "name": "xconvertq.js",
-  "version": "1.1.1-0",
+  "version": "1.1.1-1",
   "description": "",
   "bin": "dist/main.js",
   "scripts": {
@@ -58,8 +58,10 @@
     "@types/yargs": "^17.0.4",
     "@typescript-eslint/eslint-plugin": "^4.28.0",
     "@typescript-eslint/parser": "^4.28.0",
+    "auto-changelog": "^2.3.0",
     "eslint": "^7.29.0",
-    "pkg": "^5.4.0"
+    "pkg": "^5.4.0",
+    "release-it": "^14.11.6"
   },
   "pkg": {
     "assets": [
