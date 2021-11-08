@@ -24,9 +24,9 @@ export abstract class BaseService implements OnModuleInit {
 
   public async flush(queue: object[], model: QInitModel<object>): Promise<void> {
     if (queue.length === 0) return
-    // const data = [...queue]
+    const data = [...queue]
     queue.length = 0
-    // await model.init(data)
+    await model.init(data)
   }
 
   public abstract execute(): Promise<void>
