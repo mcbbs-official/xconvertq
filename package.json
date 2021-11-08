@@ -69,7 +69,9 @@
     ],
     "compress": "Gzip",
     "targets": [
-      "linux"
+      "node16-linuxstatic",
+      "node16-win",
+      "node16-macos"
     ],
     "outputPath": "pkg"
   }
