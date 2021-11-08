@@ -65,13 +65,14 @@ export class ThreadService extends BaseService {
     const threadQueue: IThreadSchema[] = []
     const postQueue: IPostSchema[] = []
     await asyncStreamConsumer<IForumThreadSchema>(stream, this.concurrent, async (thread) => {
-      if (!thread.authorid && this.skipAnonymous) {
-        //匿名贴不转
-        bar.interrupt(`跳过匿名贴:${thread.tid}`)
-        bar.tick()
-        return
-      } else {
-        thread.authorid = 1
+      if (!thread.authorid) {
+        if (this.skipAnonymous) {
+          bar.interrupt(`跳过匿名贴:${thread.tid}`)
+          bar.tick()
+          return
+        } else {
+          thread.authorid = 1
+        }
       }
 
       if (!userIds.has(thread.authorid)) {
@@ -80,17 +81,18 @@ export class ThreadService extends BaseService {
         return
       }
       const firstPost = await this.forumPostModel.threadFirstPost(thread)
-      if (!firstPost || !firstPost.authorid && this.skipAnonymous) {
-        bar.interrupt(`跳过匿名贴2:${thread.tid}`)
+      if (!firstPost) {
+        bar.interrupt(`跳过无楼主贴:${thread.tid}`)
         bar.tick()
         return
-      } else {
-        if (firstPost) {
-          firstPost.authorid = 1
-        } else {
-          bar.interrupt(`跳过无楼主贴:${thread.tid}`)
+      }
+      if (!firstPost.authorid) {
+        if (this.skipAnonymous) {
+          bar.interrupt(`跳过匿名贴2:${thread.tid}`)
           bar.tick()
           return
+        } else {
+          firstPost.authorid = 1
         }
       }
       const date = fromUnixTime(thread.dateline)

@@ -84,11 +84,13 @@ export class PostService extends BaseService {
     const threadCounter = new Map<number, number>()
 
     await asyncStreamConsumer<IForumPostSchema>(postStream, this.concurrent, async (post) => {
-      if (!post.authorid && this.skipAnonymous) {
-        bar.tick()
-        return
-      } else {
-        post.authorid = 1
+      if (!post.authorid) {
+        if (this.skipAnonymous) {
+          bar.tick()
+          return
+        } else {
+          post.authorid = 1
+        }
       }
       if (!userIds.has(post.authorid)) {
         bar.interrupt(`用户不存在: pid ${post.pid}`)
