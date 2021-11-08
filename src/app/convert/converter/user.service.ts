@@ -66,9 +66,13 @@ export class UserService extends BaseService {
         avatar = this.discuzxAvatarPath(member.uid)
       }
       const date = fromUnixTime(ucMember.regdate)
+      let username = ucMember.username
+      if (this.usernameSet.has(username)) {
+        username = `${username}${this.rand()}`
+      }
       const user = {
         id: member.uid,
-        username: ucMember.username,
+        username,
         status: member.status,
         password: ucMember.password,
         avatar,
@@ -78,10 +82,7 @@ export class UserService extends BaseService {
         created_at: date,
         thread_count: memberCount?.threads ?? 0,
         mobile: memberProfile?.mobile ?? '',
-        nickname: this.userModel.hasNickName ? ucMember.username : undefined,
-      }
-      if (this.usernameSet.has(user.username)) {
-        user.username = `${user.username}${this.rand()}`
+        nickname: this.userModel.hasNickName ? username : undefined,
       }
       queue.push(user)
       if (queue.length >= this.batchSize) {
@@ -103,6 +104,6 @@ export class UserService extends BaseService {
   }
 
   private rand(): string {
-    return (Math.random() * 8999999 + 1000000).toString()
+    return (~~(Math.random() * 8999999 + 1000000)).toString()
   }
 }
