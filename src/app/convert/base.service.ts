@@ -17,7 +17,7 @@ export abstract class BaseService implements OnModuleInit {
     this.highWaterMark = this.configService.get('HighWaterMark')
     this.batchSize = parseInt(this.configService.get('BATCH_SIZE', '1000'), 10)
     this.piscina = new Piscina({
-      filename: require.resolve('../../../worker'),
+      filename: require.resolve('../../worker'),
       idleTimeout: ms('1h'),
       maxThreads: parseInt(this.configService.get('MAX_THREAD', '0'), 10) || null,
       workerData: {
