@@ -47,16 +47,20 @@ export class UserService extends BaseService {
     const creator = await this.userModel.getByPk(1)
     this.usernameSet.add(creator.username)
 
+    const userMemberLoader = this.ucenterMemberModel.getPkLoader()
+    const commonMemberCountLoader = this.commonMemberCountModel.getPkLoader()
+    const commonMemberProfileModelLoader = this.commonMemberProfileModel.getPkLoader()
+
     const queue: IUserSchema[] = []
-    await asyncStreamConsumer<ICommonMemberSchema>(cursor, 50, async (member) => {
-      const ucMember = await this.ucenterMemberModel.getByPk(member.uid)
+    await asyncStreamConsumer<ICommonMemberSchema>(cursor, this.concurrent, async (member) => {
+      const ucMember = await userMemberLoader.load(member.uid)
       if (!ucMember) {
         bar.tick()
         return
       }
 
-      const memberCount = await this.commonMemberCountModel.getByPk(member.uid)
-      const memberProfile = await this.commonMemberProfileModel.getByPk(member.uid)
+      const memberCount = await commonMemberCountLoader.load(member.uid)
+      const memberProfile = await commonMemberProfileModelLoader.load(member.uid)
       let avatar = ''
       if (member.avatarstatus) {
         avatar = this.discuzxAvatarPath(member.uid)
