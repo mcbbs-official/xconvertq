@@ -1,4 +1,4 @@
-import {Injectable} from '@nestjs/common'
+import {Injectable, OnModuleInit} from '@nestjs/common'
 import * as DataLoader from 'dataloader'
 import {pick} from 'lodash'
 import * as QuickLRU from 'quick-lru'
@@ -23,12 +23,17 @@ export interface IUserSchema {
 export type UserCache = Pick<IUserSchema, 'id' | 'username'>
 
 @Injectable()
-export class UserModel extends QInitModel<IUserSchema> {
+export class UserModel extends QInitModel<IUserSchema> implements OnModuleInit {
+  public hasNickName: boolean
   constructor(
     private readonly userWalletModel: UserWalletModel,
     private readonly groupUserModel: GroupUserModel,
   ) {
     super('users')
+  }
+
+  public async onModuleInit(): Promise<void> {
+    this.hasNickName = await this.table.schema.hasColumn(this.tableName, 'nickname')
   }
 
   public async init(user: IUserSchema[]): Promise<void> {

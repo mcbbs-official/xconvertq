@@ -78,12 +78,13 @@ export class UserService extends BaseService {
         created_at: date,
         thread_count: memberCount?.threads ?? 0,
         mobile: memberProfile?.mobile ?? '',
+        nickname: this.userModel.hasNickName ? ucMember.username : undefined,
       }
       if (this.usernameSet.has(user.username)) {
         user.username = `${user.username}${this.rand()}`
       }
       queue.push(user)
-      if (queue.length >= this.batchSize ) {
+      if (queue.length >= this.batchSize) {
         await this.flush(queue, this.userModel)
       }
       bar.tick()
@@ -91,14 +92,13 @@ export class UserService extends BaseService {
     await this.flush(queue, this.userModel)
     bar.terminate()
     this.logger.info(`用户转换完成，耗时${formatDistanceToNow(start, {locale: zhCN})}`)
-
   }
 
   private discuzxAvatarPath(uid: number, size = 'big', type = ''): string {
     size = ['big', 'middle', 'small'].includes(size) ? size : 'middle'
     const uidStr = uid.toString(10).padStart(9, '0')
     const dir = [uidStr.substr(0, 3), uidStr.substr(3, 2), uidStr.substr(5, 2)]
-    const typeadd = type === 'real' ? '_real' : '';
+    const typeadd = type === 'real' ? '_real' : ''
     return `${dir.join('/')}/${uidStr.substr(-2)}${typeadd}_avatar_${size}.jpg`
   }
 

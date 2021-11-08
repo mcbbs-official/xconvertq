@@ -18,7 +18,7 @@ rules:
   arrow-spacing: error
   block-spacing: [error, never]
   brace-style: [error, 1tbs, {allowSingleLine: true}]
-  camelcase: [error, {properties: always}]
+#  camelcase: [error, {properties: always}]
   callback-return: error
   comma-dangle: [error, always-multiline]
   comma-spacing: [error, {before: false, after: true}]
