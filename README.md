@@ -17,6 +17,8 @@ XconvertQ是使用nodejs重写的改进 [官方转换工具](https://discuz.com/
 
 ![thread](doc/xconvertq.js-thread.png)
  - 主题只需要不到半小时
+ 
+![img.png](doc/xconvertq.js-post.png)
  - 回复转换使用多线程,1700万回复帖转换耗时一个半小时
 
 # 安装
