@@ -53,14 +53,15 @@ export class UserService extends BaseService {
 
     const queue: IUserSchema[] = []
     await asyncStreamConsumer<ICommonMemberSchema>(cursor, this.concurrent, async (member) => {
-      const ucMember = await userMemberLoader.load(member.uid)
+      const [ucMember, memberCount, memberProfile] = await Promise.all([
+        userMemberLoader.load(member.uid),
+        commonMemberCountLoader.load(member.uid),
+        commonMemberProfileModelLoader.load(member.uid),
+      ])
       if (!ucMember) {
         bar.tick()
         return
       }
-
-      const memberCount = await commonMemberCountLoader.load(member.uid)
-      const memberProfile = await commonMemberProfileModelLoader.load(member.uid)
       let avatar = ''
       if (member.avatarstatus) {
         avatar = this.discuzxAvatarPath(member.uid)
