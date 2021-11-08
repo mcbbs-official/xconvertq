@@ -8,7 +8,6 @@ import * as DataLoader from 'dataloader'
 import {formatDistanceToNow, fromUnixTime} from 'date-fns'
 import {zhCN} from 'date-fns/locale'
 import {InjectLogger} from 'nestjs-bunyan'
-import processMessage from '../../../worker'
 import {IPostSchema, PostModel} from '../../models/q/post.model'
 import {ThreadModel} from '../../models/q/thread.model'
 import {UserModel} from '../../models/q/user.model'
@@ -16,6 +15,8 @@ import {ForumForumModel} from '../../models/x/forum-forum.model'
 import {ForumPostModel, IForumPostSchema} from '../../models/x/forum-post.model'
 import {ForumThreadModel} from '../../models/x/forum-thread.model'
 import {BaseService} from '../base.service'
+import ms = require('ms')
+import Piscina = require('piscina')
 
 
 interface IReply {
@@ -35,6 +36,8 @@ export class PostService extends BaseService {
   private readonly queue: IPostSchema[] = []
   private readonly postIdLoader: DataLoader<number, IPostSchema>
 
+  private readonly piscina: Piscina
+
   constructor(
     private readonly postModel: PostModel,
     private readonly forumPostModel: ForumPostModel,
@@ -49,6 +52,14 @@ export class PostService extends BaseService {
     this.postIdLoader = new DataLoader<number, IPostSchema>(async (pids) => {
       const posts = await this.postModel.query.whereIn('id', pids)
       return pids.map((pid) => posts.find((post) => post.id === pid))
+    })
+    this.piscina = new Piscina({
+      filename: require.resolve('../../../worker'),
+      idleTimeout: ms('1h'),
+      maxThreads: parseInt(configService.get('MAX_THREAD', '0'), 10) || null,
+      workerData: {
+        mode: configService.get('CONVERT_MODE', 'html')
+      }
     })
   }
 
@@ -72,8 +83,8 @@ export class PostService extends BaseService {
     const forumIds = forumIdsQuery.map((e) => e.fid)
     const postQuery = this.forumPostModel.convertPost(forumIds)
     this.logger.info('统计总数')
-    const postCount = await postQuery.clone().count({count: 'pid'})
-    const bar = this.getBar('转换回复信息', postCount[0].count)
+    // const postCount = await postQuery.clone().count({count: 'pid'})
+    const bar = this.getBar('转换回复信息', 17190566)
 
     bar.interrupt('构建用户缓存')
     const userIds = await this.userModel.getAllId()
@@ -108,7 +119,7 @@ export class PostService extends BaseService {
 
       const date = fromUnixTime(post.dateline)
 
-      const result: IReply = await processMessage(post.message)
+      const result: IReply = await this.piscina.run(post.message)
       const postData: IPostSchema = {
         id: post.pid,
         user_id: post.authorid,
