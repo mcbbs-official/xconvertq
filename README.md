@@ -19,9 +19,53 @@ XconvertQ是使用nodejs重写的改进 [官方转换工具](https://discuz.com/
  - 主题只需要不到半小时
  - 回复转换使用多线程
 
+# 安装
+## 二进制
+从 [Release](https://github.com/mcbbs-official/xconvertq/releases) 挑一个最新版本下载
+
+## 源码
+1. git clone
+2. npm ci
+3. npm run build
+4. node dist/main.js
+
 # 使用
+
+## mysql 参数调整
+由于使用了批量插入，若帖子内存在大量长贴，可能会导致超出mysql包大小限制，可以使用一下命令临时修改mysql包大小限制
 ```sql 
 set global max_allowed_packet = 1073741824;
 ```
+若没有mysql管理员权限，无法修改包大小限制，则需要降低批量大小 详见 `BATCH_SIZE`参数
 
- TBD
+## 参数
+## 栗子
+见 [参数栗子](./.env.defaults)
+
+## 设置参数
+参数可以读取当前目录的.env文件，也可以使用环境变量传入
+
+## 说明
+|key|默认值|说明|
+|---|---|---|
+|X_MYSQL|-|DiscuzX的mysql连接串 mysql://user:pass@host/db
+|X_PRE|-|DiscuzX的表前缀
+|Q_MYSQL|-|DiscuzQ的mysql连接串
+|Q_PRE|-|DiscuzQ的表前缀
+|SKIP_ANONYMOUS|false|是否跳过DiscuzX的匿名贴转换
+|BATCH_SIZE|1000|批量插入大小
+|MAX_THREAD|0|转换帖子时使用的线程数量，为0使用所有核心
+|CONVERT_MODE|html|转化模式，可选html或markdown
+
+## 命令
+###  转换所有
+- convert
+- convert all
+### 部分转换
+- convert user
+- convert category
+- convert attachment
+- convert emoji
+- convert thread
+- convert post
+- convert setting
