@@ -4,7 +4,7 @@ import {Knex} from 'knex'
 import {QMysql} from '../models.constant'
 
 @Injectable()
-export abstract class QBaseModel<T = object> {
+export abstract class QBaseModel<T = unknown> {
   @Inject(QMysql) protected readonly table: Knex<T>
   @Inject() protected readonly configService: ConfigService
 
@@ -31,9 +31,9 @@ export abstract class QBaseModel<T = object> {
 }
 
 export abstract class QInitModel<T> extends QBaseModel<T> {
-  public abstract init(data: T[]): Promise<void>
-
   public async check(): Promise<boolean> {
-    return !!(await this.query.where(this.pk, '>', 1).first())
+    return !!await this.query.where(this.pk, '>', 1).first()
   }
+
+  public abstract init(data: T[]): Promise<void>
 }

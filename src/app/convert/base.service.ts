@@ -1,5 +1,6 @@
 import {Inject, OnModuleInit} from '@nestjs/common'
 import {ConfigService} from '@nestjs/config'
+import {cpus} from 'os'
 import * as ProgressBar from 'progress'
 import {QInitModel} from '../models/q/q-base.model'
 import ms = require('ms')
@@ -16,13 +17,19 @@ export abstract class BaseService implements OnModuleInit {
   public onModuleInit(): void {
     this.highWaterMark = this.configService.get('HighWaterMark')
     this.batchSize = parseInt(this.configService.get('BATCH_SIZE', '1000'), 10)
+    let maxThreads = parseInt(this.configService.get('MAX_THREAD', '0'), 10)
+    if (isNaN(maxThreads)) {
+      maxThreads = cpus().length
+    }
+    this.concurrent = maxThreads * 20
+
     this.piscina = new Piscina({
       filename: require.resolve('../../worker'),
       idleTimeout: ms('1h'),
-      maxThreads: parseInt(this.configService.get('MAX_THREAD', '0'), 10) || null,
+      maxThreads,
       workerData: {
-        mode: this.configService.get('CONVERT_MODE', 'html')
-      }
+        mode: this.configService.get('CONVERT_MODE', 'html'),
+      },
     })
   }
 
@@ -33,7 +40,7 @@ export abstract class BaseService implements OnModuleInit {
     })
   }
 
-  public async flush(queue: object[], model: QInitModel<object>): Promise<void> {
+  public async flush(queue: unknown[], model: QInitModel<unknown>): Promise<void> {
     if (queue.length === 0) return
     const data = [...queue]
     queue.length = 0
