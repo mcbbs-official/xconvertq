@@ -48,3 +48,12 @@ export default function processMessage(message: string): IMessageData {
     replyInfo,
   }
 }
+
+export function convertMessage(message): string {
+  const html = convert.process(message, {render}).html
+  if (workerData.mode === 'markdown') {
+    return drsax.write(html)
+  } else {
+    return html
+  }
+}

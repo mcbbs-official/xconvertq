@@ -15,9 +15,6 @@ import {ForumForumModel} from '../../models/x/forum-forum.model'
 import {ForumPostModel, IForumPostSchema} from '../../models/x/forum-post.model'
 import {ForumThreadModel} from '../../models/x/forum-thread.model'
 import {BaseService} from '../base.service'
-import ms = require('ms')
-import Piscina = require('piscina')
-
 
 interface IReply {
   message: string
@@ -36,8 +33,6 @@ export class PostService extends BaseService {
   private readonly queue: IPostSchema[] = []
   private readonly postIdLoader: DataLoader<number, IPostSchema>
 
-  private readonly piscina: Piscina
-
   constructor(
     private readonly postModel: PostModel,
     private readonly forumPostModel: ForumPostModel,
@@ -52,14 +47,6 @@ export class PostService extends BaseService {
     this.postIdLoader = new DataLoader<number, IPostSchema>(async (pids) => {
       const posts = await this.postModel.query.whereIn('id', pids)
       return pids.map((pid) => posts.find((post) => post.id === pid))
-    })
-    this.piscina = new Piscina({
-      filename: require.resolve('../../../worker'),
-      idleTimeout: ms('1h'),
-      maxThreads: parseInt(configService.get('MAX_THREAD', '0'), 10) || null,
-      workerData: {
-        mode: configService.get('CONVERT_MODE', 'html')
-      }
     })
   }
 

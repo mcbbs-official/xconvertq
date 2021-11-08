@@ -13,7 +13,6 @@ import {ForumForumModel} from '../../models/x/forum-forum.model'
 import {ForumPostModel} from '../../models/x/forum-post.model'
 import {ForumThreadModel, IForumThreadSchema} from '../../models/x/forum-thread.model'
 import {BaseService} from '../base.service'
-import * as convert from 'bbcode-to-markdown'
 
 @Injectable()
 export class ThreadService extends BaseService {
@@ -108,6 +107,7 @@ export class ThreadService extends BaseService {
       }
 
       const postStatus = this.forumPostModel.approvedValue(firstPost.invisible)
+      const content = await this.piscina.run(firstPost.message, {name: 'convertMessage'})
       const postData: IPostSchema = {
         id: firstPost.pid,
         user_id: firstPost.authorid,
@@ -115,7 +115,7 @@ export class ThreadService extends BaseService {
         is_first: firstPost.first,
         created_at: date,
         updated_at: fromUnixTime(thread.lastpost),
-        content: convert(firstPost.message),
+        content,
         ip: firstPost.useip,
       }
       if (postStatus === 'delete') {
@@ -124,8 +124,6 @@ export class ThreadService extends BaseService {
       } else {
         postData.is_approved = postStatus
       }
-
-      // TODO convert message
 
       threadQueue.push(threadData)
       postQueue.push(postData)
