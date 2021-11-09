@@ -10,6 +10,8 @@ interface IUserWalletSchema {
   updated_at: Date
 }
 
+const date = new Date()
+
 @Injectable()
 export class UserWalletModel extends QBaseModel<IUserWalletSchema> {
   constructor() {
@@ -17,7 +19,6 @@ export class UserWalletModel extends QBaseModel<IUserWalletSchema> {
   }
 
   public async init(userIds: number[]) {
-    const date = new Date()
     const wallets: IUserWalletSchema[] = userIds.map((e) => ({
       user_id: e,
       available_amount: 0,

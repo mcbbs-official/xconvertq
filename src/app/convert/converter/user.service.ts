@@ -31,7 +31,7 @@ export class UserService extends BaseService {
     const checkUser = await this.userModel.checkUsers()
     if (checkUser) {
       this.logger.error('Q用户表有除user_id = 1 之外的数据无法继续执行用户转换，请先删除再执行命令')
-      return
+      // return
     }
 
     const start = new Date()
@@ -40,7 +40,7 @@ export class UserService extends BaseService {
     const count = await query.clone().count({count: '*'})
 
 
-    const cursor = query.stream({highWaterMark: this.configService.get('HighWaterMark')})
+    const cursor = query.stream({highWaterMark: this.highWaterMark})
 
     const bar = this.getBar('转换用户', count[0].count)
 
@@ -48,8 +48,8 @@ export class UserService extends BaseService {
     this.usernameSet.add(creator.username)
 
     const userMemberLoader = this.ucenterMemberModel.getPkLoader()
-    const commonMemberCountLoader = this.commonMemberCountModel.getPkLoader()
-    const commonMemberProfileModelLoader = this.commonMemberProfileModel.getPkLoader()
+    const commonMemberCountLoader = this.commonMemberCountModel.getPkLoader(['threads'])
+    const commonMemberProfileModelLoader = this.commonMemberProfileModel.getPkLoader(['mobile'])
 
     const queue: IUserSchema[] = []
     await asyncStreamConsumer<ICommonMemberSchema>(cursor, this.concurrent, async (member) => {

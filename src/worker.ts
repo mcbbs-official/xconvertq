@@ -2,7 +2,7 @@ import bbob from '@bbob/core'
 import {render} from '@bbob/html/es'
 import html5Preset from '@bbob/preset-html5/es'
 import * as TurndownService from 'turndown'
-import {workerData} from 'worker_threads'
+import Piscina = require('piscina')
 
 export interface IMessageData {
   message: string
@@ -40,7 +40,7 @@ export default function processMessage(message: string): IMessageData {
 
 export function convertMessage(message: string): string {
   const html = convert.process(message, {render}).html
-  if (workerData.mode === 'markdown') {
+  if (Piscina.workerData.mode === 'markdown') {
     return turndownService.turndown(html)
   } else {
     return html

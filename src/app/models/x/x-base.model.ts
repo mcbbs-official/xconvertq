@@ -26,10 +26,10 @@ export abstract class XBaseModel<T = unknown> {
     return this.query.where(this.pk, id).first()
   }
 
-  public getPkLoader(cache = false): DataLoader<string| number, T> {
+  public getPkLoader(fields: (keyof T)[] = null, cache = false): DataLoader<string| number, T> {
     return new DataLoader<string | number, T>(async (ids) => {
-      const rows = await this.query.whereIn(this.pk, ids)
-      return (ids.map((id) => rows.find((row) => row[this.pk] === id)))
+      const rows = await this.query.whereIn(this.pk, ids).select(fields)
+      return ids.map((id) => rows.find((row) => row[this.pk] === id))
     }, {
       cache,
     })
