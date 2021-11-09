@@ -21,6 +21,22 @@ XconvertQ是使用nodejs重写的改进 [官方转换工具](https://discuz.com/
 ![img.png](doc/xconvertq.js-post.png)
  - 回复转换使用多线程,1700万回复帖转换耗时一个半小时
 
+## Tradeoff
+- 由于异步并发插入，所以没法支持断点续传，如果出现错误，需要清空相关数据表重新导入
+
+# 支持版本
+源站： 
+- DiscuzX3.5
+
+目标站
+- v2.3.210412
+- v3.0.211104
+
+以上版本为项目开发中使用的版本，如果有其他版本能成功，
+可以在<https://github.com/mcbbs-official/xconvertq/discussions>中提出
+
+如果有不成功的，可以携带错误日志和版本提交issue，如果能提供测试数据or环境更佳
+
 # 安装
 ## 二进制
 从 [Release](https://github.com/mcbbs-official/xconvertq/releases) 挑一个最新版本下载
