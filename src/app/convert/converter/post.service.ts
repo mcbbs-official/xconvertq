@@ -78,7 +78,8 @@ export class PostService extends BaseService {
 
     const usernameLoader = this.userModel.getUsernameLoader()
 
-    const postStream = postQuery.clone().stream({highWaterMark: this.configService.get('HighWaterMark')})
+    const postStream = postQuery.clone().orderBy('pid', 'asc')
+      .stream({highWaterMark: this.configService.get('HighWaterMark')})
 
     const threadCache = this.forumThreadModel.getPostConvertCache()
     const threadCounter = new Map<number, number>()
