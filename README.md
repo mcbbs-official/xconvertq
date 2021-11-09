@@ -56,7 +56,7 @@ set global max_allowed_packet = 1073741824;
 ```
 若没有mysql管理员权限，无法修改包大小限制，则需要降低批量大小 详见 `BATCH_SIZE`参数
 
-~~ 即使`BATCH_SIZE=1`也比官方更快更省内存 ~~
+~~即使`BATCH_SIZE=1`也比官方更快更省内存什么的~~
 
 ## 步骤
 1. 首先按照 [官方步骤](https://discuz.com/docs/Discuzto.html) 的3、4、5，修改数据库和dzq文件并且安置附件
