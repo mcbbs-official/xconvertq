@@ -20,6 +20,8 @@ export class ThreadService extends BaseService {
 
   private readonly skipAnonymous: boolean
 
+  private threadType = 1
+
   constructor(
     private readonly threadModel: ThreadModel,
     private readonly forumThreadModel: ForumThreadModel,
@@ -37,6 +39,9 @@ export class ThreadService extends BaseService {
     super.onModuleInit()
     if (this.batchSize > 10) {
       this.batchSize = Math.round(this.batchSize / 10)
+    }
+    if (this.configService.get('CONVERT_MODE') === 'markdown') {
+      this.threadType = 99
     }
   }
 
@@ -100,7 +105,7 @@ export class ThreadService extends BaseService {
         id: thread.tid,
         user_id: thread.authorid,
         category_id: thread.fid,
-        type: 1,
+        type: this.threadType,
         title: thread.subject,
         post_count: thread.replies + 1,
         view_count: thread.views,
