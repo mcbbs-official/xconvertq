@@ -1,28 +1,22 @@
-import html5Preset from '@bbob/preset-html5/es'
-import { render } from '@bbob/html/es'
 import bbob from '@bbob/core'
+import {render} from '@bbob/html/es'
+import html5Preset from '@bbob/preset-html5/es'
+import * as TurndownService from 'turndown'
 import {workerData} from 'worker_threads'
-import * as DrSax from 'dr-sax'
 
 export interface IMessageData {
-  message: string,
+  message: string
   replyInfo: {
     pid: number
     username: string
   }
 }
 
-let runs = 0
-
-const drsax = new DrSax()
+const turndownService = new TurndownService()
 
 const convert = bbob(html5Preset())
 
 export default function processMessage(message: string): IMessageData {
-  runs ++
-  if (runs % 10000 === 0) {
-    // writeHeapSnapshot()
-  }
   let replyInfo = null
   message = message.replace(/^\[quote]([\s\S]*?)\[\/quote]/, (_, matches) => {
     if (matches[0]) {
@@ -37,22 +31,17 @@ export default function processMessage(message: string): IMessageData {
     }
     return ''
   })
-  const html = convert.process(message, {render}).html
-  if (workerData.mode === 'markdown') {
-    message = drsax.write(html)
-  } else {
-    message = html
-  }
+  message = convertMessage(message)
   return {
     message,
     replyInfo,
   }
 }
 
-export function convertMessage(message): string {
+export function convertMessage(message: string): string {
   const html = convert.process(message, {render}).html
   if (workerData.mode === 'markdown') {
-    return drsax.write(html)
+    return turndownService.turndown(html)
   } else {
     return html
   }
