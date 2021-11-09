@@ -50,7 +50,7 @@ export class AttachmentService extends BaseService {
         user_id: attachmentInfo.uid,
         type_id: attachmentInfo.pid,
         order: 0,
-        type: attachmentInfo.isimage ? 1: 0,
+        type: attachmentInfo.isimage ? 1 : 0,
         is_remote: attachmentInfo.remote,
         is_approved: 1,
         attachment: basename(file),

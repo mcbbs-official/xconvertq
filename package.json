@@ -23,7 +23,7 @@
     "@nestjs/platform-express": "^8.0.6",
     "@sindresorhus/is": "^4.2.0",
     "async-sema": "^3.1.1",
-    "async-stream-consumer": "^1.0.2",
+    "async-stream-consumer": "^1.0.3",
     "bbcode-to-markdown": "^1.0.3",
     "bluebird": "^3.7.2",
     "bunyan": "^1.8.15",

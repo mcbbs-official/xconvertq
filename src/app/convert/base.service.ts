@@ -1,3 +1,4 @@
+import {toBoolean} from '@bangbang93/utils'
 import {Inject, OnModuleInit} from '@nestjs/common'
 import {ConfigService} from '@nestjs/config'
 import {cpus} from 'os'
@@ -14,6 +15,7 @@ export abstract class BaseService implements OnModuleInit {
   protected highWaterMark: number
   protected batchSize: number
   protected concurrent: number = 50
+  protected dryRun = false
 
   public onModuleInit(): void {
     this.highWaterMark = this.configService.get('HighWaterMark')
@@ -23,6 +25,7 @@ export abstract class BaseService implements OnModuleInit {
       maxThreads = cpus().length
     }
     this.concurrent = maxThreads * 20
+    this.dryRun = toBoolean(this.configService.get('DRY_RUN', 'false'))
 
     if (!piscina) {
       piscina = new Piscina({
@@ -47,6 +50,7 @@ export abstract class BaseService implements OnModuleInit {
     if (queue.length === 0) return
     const data = [...queue]
     queue.length = 0
+    if (this.dryRun) return
     await model.init(data)
   }
 
