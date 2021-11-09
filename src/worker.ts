@@ -39,10 +39,16 @@ export default function processMessage(message: string): IMessageData {
 }
 
 export function convertMessage(message: string): string {
-  const html = convert.process(message, {render}).html
-  if (Piscina.workerData.mode === 'markdown') {
-    return turndownService.turndown(html)
-  } else {
-    return html
+  try {
+    const html = convert.process(message, {render}).html
+    if (Piscina.workerData.mode === 'markdown') {
+      return turndownService.turndown(html)
+    } else {
+      return html
+    }
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error(e, message)
+    return message
   }
 }
