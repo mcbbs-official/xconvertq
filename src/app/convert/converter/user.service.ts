@@ -31,7 +31,7 @@ export class UserService extends BaseService {
     const checkUser = await this.userModel.checkUsers()
     if (checkUser) {
       this.logger.error('Q用户表有除user_id = 1 之外的数据无法继续执行用户转换，请先删除再执行命令')
-      // return
+      return
     }
 
     const start = new Date()
