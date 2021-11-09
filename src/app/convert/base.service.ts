@@ -45,9 +45,9 @@ export abstract class BaseService implements OnModuleInit {
 
   public async flush(queue: unknown[], model: QInitModel<unknown>): Promise<void> {
     if (queue.length === 0) return
-    // const data = [...queue]
+    const data = [...queue]
     queue.length = 0
-    // await model.init(data)
+    await model.init(data)
   }
 
   protected get piscina(): Piscina {
