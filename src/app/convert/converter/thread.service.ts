@@ -72,7 +72,7 @@ export class ThreadService extends BaseService {
     await asyncStreamConsumer<IForumThreadSchema>(stream, this.concurrent, async (thread) => {
       if (!thread.authorid) {
         if (this.skipAnonymous) {
-          bar.interrupt(`跳过匿名贴:${thread.tid}`)
+          bar.interrupt(`跳过匿名贴: tid=${thread.tid}`)
           bar.tick()
           return
         } else {
@@ -81,19 +81,19 @@ export class ThreadService extends BaseService {
       }
 
       if (!userIds.has(thread.authorid)) {
-        bar.interrupt(`用户不存在:${thread.tid}`)
+        bar.interrupt(`用户不存在: tid=${thread.tid} uid=${thread.authorid}`)
         bar.tick()
         return
       }
       const firstPost = await this.forumPostModel.threadFirstPost(thread)
       if (!firstPost) {
-        bar.interrupt(`跳过无楼主贴:${thread.tid}`)
+        bar.interrupt(`跳过无楼主贴: tid=${thread.tid}`)
         bar.tick()
         return
       }
       if (!firstPost.authorid) {
         if (this.skipAnonymous) {
-          bar.interrupt(`跳过匿名贴2:${thread.tid}`)
+          bar.interrupt(`跳过匿名贴2: tid=${thread.tid}`)
           bar.tick()
           return
         } else {

@@ -30,6 +30,6 @@ import {ConvertModule} from './convert/convert.module'
     }),
 
     ConvertModule,
-  ]
+  ],
 })
 export class AppModule {}
