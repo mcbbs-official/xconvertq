@@ -3,6 +3,7 @@ import {ConfigModule, ConfigService} from '@nestjs/config'
 import {BunyanLoggerModule} from 'nestjs-bunyan'
 import {join} from 'path'
 import {cwd} from 'process'
+import {CleanModule} from './clean/clean.module'
 import {ConvertModule} from './convert/convert.module'
 
 @Module({
@@ -30,6 +31,7 @@ import {ConvertModule} from './convert/convert.module'
     }),
 
     ConvertModule,
+    CleanModule,
   ],
 })
 export class AppModule {}
