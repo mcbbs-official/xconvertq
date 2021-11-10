@@ -14,7 +14,7 @@ import {UserService} from './converter/user.service'
 @Command({
   name: 'convert',
   description: '转换',
-  arguments: '<tasks...>',
+  arguments: '[tasks...]',
 })
 export class ConvertService implements CommandRunner {
   @InjectLogger() private readonly logger: Logger

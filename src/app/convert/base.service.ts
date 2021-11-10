@@ -16,27 +16,17 @@ export abstract class BaseService implements OnModuleInit {
   protected batchSize: number
   protected concurrent: number = 50
   protected dryRun = false
+  protected maxThreads = cpus().length
 
   public onModuleInit(): void {
     this.highWaterMark = this.configService.get('HighWaterMark')
     this.batchSize = parseInt(this.configService.get('BATCH_SIZE', '1000'), 10)
-    let maxThreads = parseInt(this.configService.get('MAX_THREAD', '0'), 10)
-    if (isNaN(maxThreads) || maxThreads === 0) {
-      maxThreads = cpus().length
+    this.maxThreads = parseInt(this.configService.get('MAX_THREAD', '0'), 10)
+    if (isNaN(this.maxThreads) || this.maxThreads === 0) {
+      this.maxThreads = cpus().length
     }
-    this.concurrent = maxThreads * 20
+    this.concurrent = this.maxThreads * 20
     this.dryRun = toBoolean(this.configService.get('DRY_RUN', 'false'))
-
-    if (!piscina) {
-      piscina = new Piscina({
-        filename: require.resolve('../../worker'),
-        idleTimeout: ms('1h'),
-        maxThreads,
-        workerData: {
-          mode: this.configService.get('CONVERT_MODE', 'html'),
-        },
-      })
-    }
   }
 
   public getBar(name: string, total: number): ProgressBar {
@@ -55,7 +45,19 @@ export abstract class BaseService implements OnModuleInit {
   }
 
   protected get piscina(): Piscina {
-    return piscina
+    if (piscina) {
+      return piscina
+    } else {
+      piscina = new Piscina({
+        filename: require.resolve('../../worker'),
+        idleTimeout: ms('1h'),
+        maxThreads: this.maxThreads,
+        workerData: {
+          mode: this.configService.get('CONVERT_MODE', 'html'),
+        },
+      })
+      return piscina
+    }
   }
 
   public abstract execute(): Promise<void>
