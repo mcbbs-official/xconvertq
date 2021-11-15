@@ -8,6 +8,7 @@ import {PostService} from './converter/post.service'
 import {SettingService} from './converter/setting.service'
 import {ThreadService} from './converter/thread.service'
 import {UserService} from './converter/user.service'
+import {MessageService} from './message.service'
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import {UserService} from './converter/user.service'
     ThreadService,
     PostService,
     SettingService,
+    MessageService,
   ],
   exports: [
     ConvertService,

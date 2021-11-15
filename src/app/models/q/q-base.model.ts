@@ -1,5 +1,6 @@
 import {Inject, Injectable} from '@nestjs/common'
 import {ConfigService} from '@nestjs/config'
+import * as DataLoader from 'dataloader'
 import {Knex} from 'knex'
 import {QMysql} from '../models.constant'
 
@@ -27,6 +28,15 @@ export abstract class QBaseModel<T = unknown> {
 
   public async insertMany(data: Array<Partial<T>>): Promise<void> {
     await this.query.insert(data as any)
+  }
+
+  public getPkLoader(fields: (keyof T)[] = null, cache = false): DataLoader<string| number, T> {
+    return new DataLoader<string | number, T>(async (ids) => {
+      const rows = await this.query.whereIn(this.pk, ids).select(fields)
+      return ids.map((id) => rows.find((row) => row[this.pk] === id))
+    }, {
+      cache,
+    })
   }
 }
 

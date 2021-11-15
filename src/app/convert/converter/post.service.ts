@@ -15,6 +15,7 @@ import {ForumForumModel} from '../../models/x/forum-forum.model'
 import {ForumPostModel, IForumPostSchema} from '../../models/x/forum-post.model'
 import {ForumThreadModel} from '../../models/x/forum-thread.model'
 import {BaseService} from '../base.service'
+import {MessageService} from '../message.service'
 
 interface IReply {
   message: string
@@ -40,6 +41,7 @@ export class PostService extends BaseService {
     private readonly forumForumModel: ForumForumModel,
     private readonly userModel: UserModel,
     private readonly threadModel: ThreadModel,
+    private readonly messageService: MessageService,
     configService: ConfigService,
   ) {
     super()
@@ -61,7 +63,7 @@ export class PostService extends BaseService {
     const check = await this.postModel.check()
     if (check) {
       this.logger.error('Q帖子表中有数据，请先删除再执行命令')
-      return
+      // return
     }
 
     const start = new Date()
@@ -113,7 +115,7 @@ export class PostService extends BaseService {
 
       const date = fromUnixTime(post.dateline)
 
-      const result: IReply = await this.piscina.run(post.message)
+      const result: IReply = await this.convertMessage(post.message)
       const postData: IPostSchema = {
         id: post.pid,
         user_id: post.authorid,
@@ -176,6 +178,12 @@ export class PostService extends BaseService {
     })
 
     this.logger.info(`回复转换完成，耗时${formatDistanceToNow(start, {locale: zhCN})}`)
+  }
+
+  public async convertMessage(message: string): Promise<IReply> {
+    const reply: IReply = await this.piscina.run(message, {name: 'processMessage'})
+    reply.message = await this.messageService.processMessage(reply.message)
+    return reply
   }
 
   private async getPost(pid: number): Promise<IPostSchema> {
